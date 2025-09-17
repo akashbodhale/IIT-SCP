@@ -117,6 +117,8 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
+      - name: Debug Secret Check (remove after testing)
+        run: echo "ACCESS_KEY is ${{ secrets.ACCESS_KEY != '' }}"
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
