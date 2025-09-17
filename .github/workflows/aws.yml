@@ -118,7 +118,9 @@ jobs:
         run: mvn -B package --file pom.xml
 
       - name: Debug Secret Check (remove after testing)
-        run: echo "ACCESS_KEY is ${{ secrets.ACCESS_KEY != '' }}"
+        run: echo "ACCESS_KEY is ${{ secrets.AWS_ACCESS_KEY != '' }}"
+      - name: Debug Secret Checks  
+        run: echo "AWS_SECRET_ACCESS_KEY is ${{ secrets.AWS_SECRET_ACCESS_KEY != '' }}"
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
