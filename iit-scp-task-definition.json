@@ -37,7 +37,6 @@
     }
   ],
   "cpu": "1024",
-  "enableFaultInjection": false,
   "executionRoleArn": "arn:aws:iam::514190630378:role/ecsTaskExecutionRole",
   "family": "iit-scp-task-definition",
   "memory": "3072",
