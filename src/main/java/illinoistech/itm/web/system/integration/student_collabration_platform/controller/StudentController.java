@@ -10,4 +10,10 @@ public class StudentController {
     public String sayHello() {
         return "Hello from Student Collaboration Platform!";
     }
+    
+    @GetMapping("/api/industrie")
+    public String sayHello() {
+        return "Hello from Student Collaboration Platform!";
+    }
+    
 }
