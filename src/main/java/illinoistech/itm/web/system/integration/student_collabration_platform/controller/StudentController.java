@@ -12,7 +12,7 @@ public class StudentController {
     }
     
     @GetMapping("/api/industrie")
-    public String sayHello() {
+    public String sayHello_industry() {
         return "Hello from Student Collaboration Platform!";
     }
     
