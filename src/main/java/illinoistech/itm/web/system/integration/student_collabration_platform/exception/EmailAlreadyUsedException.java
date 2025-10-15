@@ -1,4 +1,8 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.exception;
 
-public class EmailAlreadyUsedException {
+
+public class EmailAlreadyUsedException extends RuntimeException {
+    public EmailAlreadyUsedException(String email) {
+        super("Email already in use: " + email);
+    }
 }

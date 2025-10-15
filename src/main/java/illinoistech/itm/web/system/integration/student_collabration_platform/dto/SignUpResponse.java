@@ -1,4 +1,8 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.dto;
 
-public class SignUpResponse {
+import java.util.UUID;
+
+public record SignUpResponse(UUID id, String email, String firstName, String lastName)
+{
+
 }
