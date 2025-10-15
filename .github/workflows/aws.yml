@@ -62,7 +62,7 @@ jobs:
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: iit-scp-task-service
-          cluster: devCluster1
+          cluster: IIT_SCP
           wait-for-service-stability: true
 
 
