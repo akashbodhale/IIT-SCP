@@ -16,10 +16,6 @@ import org.springframework.web.cors.*;
 import java.util.List;
 
 @Configuration
-@EnableAutoConfiguration(exclude = {
-        SecurityAutoConfiguration.class,
-        UserDetailsServiceAutoConfiguration.class
-})
 public class SecurityConfig {
 
     @Bean
