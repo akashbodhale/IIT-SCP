@@ -61,7 +61,7 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: iit-scp-task-service
+          service: iit-scp-task-definition-service
           cluster: IIT_SCP
           wait-for-service-stability: true
 
