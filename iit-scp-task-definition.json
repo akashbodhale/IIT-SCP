@@ -24,7 +24,7 @@
       "name": "iit-scp",
       "portMappings": [
         {
-          "appProtocol": "http",
+          "appProtocol": "https",
           "containerPort": 8080,
           "hostPort": 8080,
           "name": "iit-scp-8080-tcp",

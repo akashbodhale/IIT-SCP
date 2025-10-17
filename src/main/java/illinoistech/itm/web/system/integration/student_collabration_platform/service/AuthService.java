@@ -34,7 +34,7 @@ public class AuthService {
         user.setFirstName(req.getFirstName().trim());
         user.setLastName(req.getLastName().trim());
         user.setUserType("Student");
-//        user.getRoles().add("USER");
+//      user.getRoles().add("USER");
 
         Users saved = repo.save(user);
 
