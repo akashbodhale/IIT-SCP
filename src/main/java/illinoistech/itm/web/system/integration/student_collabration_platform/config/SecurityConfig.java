@@ -1,13 +1,11 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.config;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,12 +21,28 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // For APIs, stateless is usually better. Remove if you rely on server sessions.
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Preflight
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/signup", "/actuator/health").permitAll()
-                        .requestMatchers("/api/auth/**", "/actuator/health").authenticated()
+
+                        // Public endpoints
+                        .requestMatchers(
+                                "/api/auth/signup",
+                                "/actuator/health",
+                                "/actuator/health/**"
+                                // add "/api/auth/home" here ONLY if you want it public:
+                                // , "/api/auth/home"
+                        ).permitAll()
+
+                        // Everything else under /api/auth requires authentication
+                        .requestMatchers("/api/auth/**").authenticated()
+
+                        // Any other endpoints require auth
                         .anyRequest().authenticated()
                 )
+                // Keep for now; later you might switch to JWT instead of Basic
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
@@ -36,18 +50,35 @@ public class SecurityConfig {
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(
+        CorsConfiguration cfg = new CorsConfiguration();
+
+        // Exact origins you want to allow
+        cfg.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "https://dj3eozung04ja.cloudfront.net",
                 "https://api.iit-scp.click"
         ));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.addAllowedHeader("Content-Type: application/json");
-        configuration.setAllowCredentials(true);
+
+        // Allowed methods
+        cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // Allowed request headers (names only, not values)
+        cfg.setAllowedHeaders(List.of(
+                "Authorization",
+                "Content-Type",
+                "Accept",
+                "Origin",
+                "X-Requested-With"
+        ));
+
+        // Expose response headers your frontend needs to read
+        cfg.setExposedHeaders(List.of("Location"));
+
+        cfg.setAllowCredentials(true);
+        cfg.setMaxAge(3600L); // cache preflight for 1 hour
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", cfg);
         return source;
     }
 
@@ -56,4 +87,3 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-
