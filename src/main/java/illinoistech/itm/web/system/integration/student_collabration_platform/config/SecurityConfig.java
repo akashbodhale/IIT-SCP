@@ -35,7 +35,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173","https://api.iit-scp.click")); // TEMPORARY for testing
+        configuration.setAllowedOrigins(List.of("http://localhost:5173","https://api.iit-scp.click","https://dj3eozung04ja.cloudfront.net")); // TEMPORARY for testing
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);

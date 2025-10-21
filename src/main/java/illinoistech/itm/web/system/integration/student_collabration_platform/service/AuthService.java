@@ -33,7 +33,7 @@ public class AuthService {
         user.setPasswordHash(passwordEncoder.encode(req.getPassword()));
         user.setFirstName(req.getFirstName().trim());
         user.setLastName(req.getLastName().trim());
-        user.setUserType("Student");
+        user.setUserType(req.getUserType().trim());
 //      user.getRoles().add("USER");
 
         Users saved = repo.save(user);
