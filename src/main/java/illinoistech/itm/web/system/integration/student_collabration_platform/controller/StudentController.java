@@ -3,6 +3,8 @@ package illinoistech.itm.web.system.integration.student_collabration_platform.co
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+// Student controller
+
 @RestController
 public class StudentController {
 
