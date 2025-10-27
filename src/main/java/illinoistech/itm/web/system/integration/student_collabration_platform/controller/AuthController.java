@@ -31,4 +31,10 @@ public class AuthController {
         var location = uriBuilder.path("/api/users/{id}").build(created.id());
         return ResponseEntity.created(location).body(created);
     }
+//
+//    @PostMapping("signin/{email}")
+//    public  ResponseEntity<SignUpResponse> signIn(@Valid @RequestBody SignUpResponse request)
+//    {
+//        return  null;
+//    }
 }

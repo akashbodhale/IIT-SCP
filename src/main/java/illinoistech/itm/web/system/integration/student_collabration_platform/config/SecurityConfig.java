@@ -31,7 +31,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/signup",
                                 "/actuator/health",
-                                "/actuator/health/**"
+                                "/actuator/health/**",
+                                "api/projects/all"
                                 // add "/api/auth/home" here ONLY if you want it public:
                                 // , "/api/auth/home"
                         ).permitAll()

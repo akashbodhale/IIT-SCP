@@ -1,0 +1,64 @@
+package illinoistech.itm.web.system.integration.student_collabration_platform.controller;
+import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ProjectSummaryDto;
+import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project.ProjectStatus;
+import illinoistech.itm.web.system.integration.student_collabration_platform.service.ProjectService;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/projects")
+@RequiredArgsConstructor
+public class ProjectController {
+
+    private final ProjectService service;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProjectSummaryDto> getOne(@PathVariable("id") UUID id) {
+        return ResponseEntity.ok(service.getById(id));
+    }
+
+    /**
+     *
+     * @return
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<ProjectSummaryDto>> getAllProjects() {
+        List<ProjectSummaryDto> projects = service.getAll();
+        return ResponseEntity.ok(projects);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<ProjectSummaryDto>> search(
+            @RequestParam(value = "status", required = false) ProjectStatus status,
+            @RequestParam(value = "category", required = false) String category,
+            @RequestParam(value = "ownerId", required = false) UUID ownerId,
+            @RequestParam(value = "deadlineFrom", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate deadlineFrom,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "20") int size,
+            @RequestParam(value = "sort", defaultValue = "deadline,asc") String sort
+    ) {
+        Pageable pageable = buildPageable(page, size, sort);
+        return ResponseEntity.ok(service.search(status, category, ownerId, deadlineFrom, pageable));
+    }
+
+    private Pageable buildPageable(int page, int size, String sort) {
+        // sort format: "field,dir" (e.g., "deadline,asc" or "createdAt,desc")
+        String[] parts = sort.split(",", 2);
+        String field = parts[0];
+        Sort.Direction dir = (parts.length > 1 && parts[1].equalsIgnoreCase("desc"))
+                ? Sort.Direction.DESC : Sort.Direction.ASC;
+        return PageRequest.of(page, size, Sort.by(dir, field));
+    }
+    
+}
+
