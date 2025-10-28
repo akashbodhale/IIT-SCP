@@ -1,7 +1,7 @@
 {
   "family": "iit-scp-task-definition",
   "networkMode": "awsvpc",
-  "requiresCompatibilities": ["EC2"],
+  "requiresCompatibilities": ["FARGATE"],
   "cpu": "1024",
   "memory": "3072",
   "executionRoleArn": "arn:aws:iam::514190630378:role/ecsTaskExecutionRole",
