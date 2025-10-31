@@ -1,28 +1,38 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.service;
 
+import illinoistech.itm.web.system.integration.student_collabration_platform.dto.SignInResponse;
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.SignUpResponse;
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.SignUpRequest;
+import illinoistech.itm.web.system.integration.student_collabration_platform.entity.StudentProfile;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Users;
 import illinoistech.itm.web.system.integration.student_collabration_platform.exception.EmailAlreadyUsedException;
+import illinoistech.itm.web.system.integration.student_collabration_platform.repository.StudentProfileRepository;
 import illinoistech.itm.web.system.integration.student_collabration_platform.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+@Slf4j
 @Service
 public class AuthService {
 
+
     private final UserRepository repo;
+    private final StudentProfileRepository stdrepo;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository repo, PasswordEncoder passwordEncoder) {
+    public AuthService(UserRepository repo, PasswordEncoder passwordEncoder,StudentProfileRepository stdrepo) {
         this.repo = repo;
         this.passwordEncoder = passwordEncoder;
+        this.stdrepo = stdrepo;
     }
 
 
     @Transactional
     public SignUpResponse register(SignUpRequest req) {
+
         String email = req.getEmail().trim().toLowerCase();
         if (repo.existsByEmail(email)) {
             throw new EmailAlreadyUsedException(email);
@@ -40,4 +50,23 @@ public class AuthService {
 
         return new SignUpResponse(saved.getId(), saved.getEmail(), saved.getFirstName(), saved.getLastName());
     }
+
+    @Transactional(readOnly = true)
+    public SignInResponse signInByEmail(String email)
+    {
+        var user = repo.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
+        String major = stdrepo.findByUser_UserId(user.getId())
+                .map(StudentProfile::getMajor)
+                .orElse(null);
+
+        return new SignInResponse(user.getId(), user.getEmail(),user.getUserType(),user.getFirstName(),user.getLastName(), major);
+    }
+
+    public static class UserNotFoundException extends RuntimeException {
+        public UserNotFoundException(String email) {
+            super("User not found for email:" + email);
+        }
+    }
+
 }

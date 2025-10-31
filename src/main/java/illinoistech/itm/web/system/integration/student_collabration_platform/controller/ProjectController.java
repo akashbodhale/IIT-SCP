@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/projects")
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class ProjectController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProjectSummaryDto> getOne(@PathVariable("id") UUID id) {
+        log.info("Inside {} - getOne method.", ProjectController.class.getSimpleName());
         return ResponseEntity.ok(service.getById(id));
     }
 
@@ -32,6 +35,7 @@ public class ProjectController {
      */
     @GetMapping("/all")
     public ResponseEntity<List<ProjectSummaryDto>> getAllProjects() {
+        log.info("Inside {} - getAllProjects method.", ProjectController.class.getSimpleName());
         List<ProjectSummaryDto> projects = service.getAll();
         return ResponseEntity.ok(projects);
     }
@@ -47,6 +51,7 @@ public class ProjectController {
             @RequestParam(value = "size", defaultValue = "20") int size,
             @RequestParam(value = "sort", defaultValue = "deadline,asc") String sort
     ) {
+        log.info("Inside {} - search method.", ProjectController.class.getSimpleName());
         Pageable pageable = buildPageable(page, size, sort);
         return ResponseEntity.ok(service.search(status, category, ownerId, deadlineFrom, pageable));
     }
