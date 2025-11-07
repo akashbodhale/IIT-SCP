@@ -1,21 +1,25 @@
 # -----------------------
 # Stage 1: Build Stage
 # -----------------------
-FROM openjdk:17-jdk-slim AS build
+FROM eclipse-temurin:17-jdk-alpine AS build
+
+# Install bash (needed for Maven Wrapper script)
+RUN apk add --no-cache bash
 
 # Set working directory
 WORKDIR /app
 
-# Copy Maven Wrapper and pom.xml
+# Copy Maven Wrapper files first (for better layer caching)
 COPY .mvn/ .mvn/
 COPY mvnw .
+COPY mvnw.cmd .
 COPY pom.xml .
-
-# Copy source code
-COPY src/ ./src/
 
 # Make Maven Wrapper executable
 RUN chmod +x mvnw
+
+# Copy source code
+COPY src/ ./src/
 
 # Build the Spring Boot project (skip tests for faster builds)
 RUN ./mvnw clean package -DskipTests
