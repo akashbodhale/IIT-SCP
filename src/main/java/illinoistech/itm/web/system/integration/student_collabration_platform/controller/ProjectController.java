@@ -1,7 +1,10 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.controller;
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ProjectSummaryDto;
+import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project.ProjectStatus;
 import illinoistech.itm.web.system.integration.student_collabration_platform.service.ProjectService;
+
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -14,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @RestController
@@ -21,12 +25,12 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ProjectController {
 
-    private final ProjectService service;
+    private final ProjectService projectSvc;
 
     @GetMapping("/{id}")
     public ResponseEntity<ProjectSummaryDto> getOne(@PathVariable("id") UUID id) {
         log.info("Inside {} - getOne method.", ProjectController.class.getSimpleName());
-        return ResponseEntity.ok(service.getById(id));
+        return ResponseEntity.ok(projectSvc.getById(id));
     }
 
     /**
@@ -36,8 +40,19 @@ public class ProjectController {
     @GetMapping("/all")
     public ResponseEntity<List<ProjectSummaryDto>> getAllProjects() {
         log.info("Inside {} - getAllProjects method.", ProjectController.class.getSimpleName());
-        List<ProjectSummaryDto> projects = service.getAll();
+        List<ProjectSummaryDto> projects = projectSvc.getAll();
         return ResponseEntity.ok(projects);
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<ProjectSummaryDto> createProject(@RequestBody ProjectSummaryDto project, UriComponentsBuilder uriBuilder)
+    {
+        log.info("Creating project: {}", project.title());
+        ProjectSummaryDto saved = projectSvc.create(project);
+
+        URI location = uriBuilder.path("/api/projects/{id}").buildAndExpand(saved.projectId()).toUri();
+
+        return ResponseEntity.created(location).body(saved);
     }
 
     @GetMapping
@@ -53,7 +68,7 @@ public class ProjectController {
     ) {
         log.info("Inside {} - search method.", ProjectController.class.getSimpleName());
         Pageable pageable = buildPageable(page, size, sort);
-        return ResponseEntity.ok(service.search(status, category, ownerId, deadlineFrom, pageable));
+        return ResponseEntity.ok(projectSvc.search(status, category, ownerId, deadlineFrom, pageable));
     }
 
     private Pageable buildPageable(int page, int size, String sort) {

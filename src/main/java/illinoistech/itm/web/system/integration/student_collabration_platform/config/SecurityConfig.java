@@ -33,7 +33,8 @@ public class SecurityConfig {
                                 "/api/auth/signin",
                                 "/actuator/health",
                                 "/actuator/health/**",
-                                "api/projects/all"
+                                "/api/projects/all",
+                                "/api/projects/create"
                                 // add "/api/auth/home" here ONLY if you want it public:
                                 // , "/api/auth/home"
                         ).permitAll()

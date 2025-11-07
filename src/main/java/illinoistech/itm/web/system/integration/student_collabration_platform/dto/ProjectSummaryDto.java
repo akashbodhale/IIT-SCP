@@ -3,6 +3,7 @@ package illinoistech.itm.web.system.integration.student_collabration_platform.dt
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project.ProjectStatus;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project.DifficultyLevel;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -11,6 +12,7 @@ public record ProjectSummaryDto(
         UUID projectId,
         UUID ownerId,
         String title,
+        
         String description,
         String category,
         DifficultyLevel difficultyLevel,
@@ -23,7 +25,8 @@ public record ProjectSummaryDto(
         Integer applicationsCount,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        LocalDateTime publishedAt
+        LocalDateTime publishedAt,
+        String requirements
 ) {
     public static ProjectSummaryDto fromEntity(Project project) {
         return new ProjectSummaryDto(
@@ -42,8 +45,8 @@ public record ProjectSummaryDto(
                 project.getApplicationsCount(),
                 project.getCreatedAt(),
                 project.getUpdatedAt(),
-                project.getPublishedAt()
+                project.getPublishedAt(),
+                project.getRequirements()
         );
     }
 }
-

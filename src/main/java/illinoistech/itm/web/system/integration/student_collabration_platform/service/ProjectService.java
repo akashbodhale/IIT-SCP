@@ -1,6 +1,7 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.service;
 
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ProjectSummaryDto;
+import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project.ProjectStatus;
 import java.time.LocalDate;
 import java.util.List;
@@ -21,4 +22,5 @@ public interface ProjectService {
     );
 
     List<ProjectSummaryDto> getAll();
+    ProjectSummaryDto create(ProjectSummaryDto dto);
 }

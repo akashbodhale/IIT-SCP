@@ -30,7 +30,8 @@ public class AuthController {
         return "Home";
     }
 
-    @PostMapping("/signup") public ResponseEntity<SignUpResponse> signUp(@Valid @RequestBody SignUpRequest request, UriComponentsBuilder uriBuilder )
+    @PostMapping("/signup")
+    public ResponseEntity<SignUpResponse> signUp(@Valid @RequestBody SignUpRequest request, UriComponentsBuilder uriBuilder )
     {
         log.info("Inside {} - Signup method.", AuthController.class.getSimpleName());
         SignUpResponse created = userService.register(request);
@@ -45,7 +46,5 @@ public class AuthController {
         var resp = userService.signInByEmail(request.email());
         return ResponseEntity.ok(resp);
     }
-
-    
 
 }
