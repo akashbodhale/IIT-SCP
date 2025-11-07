@@ -126,4 +126,59 @@ public class Project {
         if (status == null) status = ProjectStatus.DRAFT;
         if (applicationsCount == null) applicationsCount = 0;
     }
+
+    // Manual getters and setters (Lombok annotation processing not working)
+    public UUID getProjectId() { return projectId; }
+    public void setProjectId(UUID projectId) { this.projectId = projectId; }
+    
+    public Users getOwner() { return owner; }
+    public void setOwner(Users owner) { this.owner = owner; }
+    
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
+    
+    public DifficultyLevel getDifficultyLevel() { return difficultyLevel; }
+    public void setDifficultyLevel(DifficultyLevel difficultyLevel) { this.difficultyLevel = difficultyLevel; }
+    
+    public String getDuration() { return duration; }
+    public void setDuration(String duration) { this.duration = duration; }
+    
+    public Integer getDurationMonths() { return durationMonths; }
+    public void setDurationMonths(Integer durationMonths) { this.durationMonths = durationMonths; }
+    
+    public LocalDate getDeadline() { return deadline; }
+    public void setDeadline(LocalDate deadline) { this.deadline = deadline; }
+    
+    public LocalDate getStartDate() { return startDate; }
+    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
+    
+    public LocalDate getEndDate() { return endDate; }
+    public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
+    
+    public ProjectStatus getStatus() { return status; }
+    public void setStatus(ProjectStatus status) { this.status = status; }
+    
+    public Integer getApplicationsCount() { return applicationsCount; }
+    public void setApplicationsCount(Integer applicationsCount) { this.applicationsCount = applicationsCount; }
+    
+    public String getRequirements() { return requirements; }
+    public void setRequirements(String requirements) { this.requirements = requirements; }
+    
+    public String getDeliverables() { return deliverables; }
+    public void setDeliverables(String deliverables) { this.deliverables = deliverables; }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    
+    public LocalDateTime getPublishedAt() { return publishedAt; }
+    public void setPublishedAt(LocalDateTime publishedAt) { this.publishedAt = publishedAt; }
 }

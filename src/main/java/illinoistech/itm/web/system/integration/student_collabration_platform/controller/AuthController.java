@@ -7,6 +7,8 @@ import illinoistech.itm.web.system.integration.student_collabration_platform.dto
 import illinoistech.itm.web.system.integration.student_collabration_platform.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -16,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     private final AuthService userService;
 
     public AuthController(AuthService userService)

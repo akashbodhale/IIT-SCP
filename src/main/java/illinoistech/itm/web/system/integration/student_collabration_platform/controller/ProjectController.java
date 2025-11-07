@@ -8,8 +8,9 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,10 +23,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j
 @RestController
 @RequestMapping("/api/projects")
-@RequiredArgsConstructor
 public class ProjectController {
 
+    private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
     private final ProjectService projectSvc;
+
+    public ProjectController(ProjectService projectSvc) {
+        this.projectSvc = projectSvc;
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProjectSummaryDto> getOne(@PathVariable("id") UUID id) {

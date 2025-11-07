@@ -87,4 +87,44 @@ public class StudentProfile {
     {
         FRESHMAN, SOPHOMORE, JUNIOR, SENIOR, GRADUATE
     }
+
+    // Manual getters and setters (Lombok annotation processing not working)
+    public UUID getProfileId() { return profileId; }
+    public void setProfileId(UUID profileId) { this.profileId = profileId; }
+    
+    public Users getUser() { return user; }
+    public void setUser(Users user) { this.user = user; }
+    
+    public String getUniversity() { return university; }
+    public void setUniversity(String university) { this.university = university; }
+    
+    public String getStudentId() { return studentId; }
+    public void setStudentId(String studentId) { this.studentId = studentId; }
+    
+    public String getMajor() { return major; }
+    public void setMajor(String major) { this.major = major; }
+    
+    public AcademicYear getAcademicYear() { return academicYear; }
+    public void setAcademicYear(AcademicYear academicYear) { this.academicYear = academicYear; }
+    
+    public LocalDate getExpectedGraduation() { return expectedGraduation; }
+    public void setExpectedGraduation(LocalDate expectedGraduation) { this.expectedGraduation = expectedGraduation; }
+    
+    public String getResumeUrl() { return resumeUrl; }
+    public void setResumeUrl(String resumeUrl) { this.resumeUrl = resumeUrl; }
+    
+    public String getPortfolioUrl() { return portfolioUrl; }
+    public void setPortfolioUrl(String portfolioUrl) { this.portfolioUrl = portfolioUrl; }
+    
+    public String getGithubUrl() { return githubUrl; }
+    public void setGithubUrl(String githubUrl) { this.githubUrl = githubUrl; }
+    
+    public String getLinkedinUrl() { return linkedinUrl; }
+    public void setLinkedinUrl(String linkedinUrl) { this.linkedinUrl = linkedinUrl; }
+    
+    public OffsetDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
+    
+    public OffsetDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

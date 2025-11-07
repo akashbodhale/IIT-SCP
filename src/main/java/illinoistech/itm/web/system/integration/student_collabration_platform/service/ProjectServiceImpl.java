@@ -14,8 +14,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,12 +26,17 @@ import static org.springframework.data.jpa.domain.Specification.allOf;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProjectServiceImpl implements ProjectService {
 
+    private static final Logger log = LoggerFactory.getLogger(ProjectServiceImpl.class);
     private final ProjectRepository repo;
     private final UserRepository userRepository;
+
+    public ProjectServiceImpl(ProjectRepository repo, UserRepository userRepository) {
+        this.repo = repo;
+        this.userRepository = userRepository;
+    }
 
     @Override
     public ProjectSummaryDto getById(UUID projectId) {
