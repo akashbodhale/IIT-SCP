@@ -27,7 +27,7 @@ public class SecurityConfig {
                         // Preflight
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // Public endpoints
+                        // Public endpoints - explicitly allow POST to create
                         .requestMatchers(
                                 "/api/auth/signup",
                                 "/api/auth/signin",
@@ -38,6 +38,9 @@ public class SecurityConfig {
                                 // add "/api/auth/home" here ONLY if you want it public:
                                 // , "/api/auth/home"
                         ).permitAll()
+                        
+                        // Explicitly allow POST method for create endpoint
+                        .requestMatchers(HttpMethod.POST, "/api/projects/create").permitAll()
 
                         // Everything else under /api/auth requires authentication
                         .requestMatchers("/api/auth/**").authenticated()
@@ -45,7 +48,9 @@ public class SecurityConfig {
                         // Any other endpoints require auth
                         .anyRequest().authenticated()
                 )
-                // Keep for now; later you might switch to JWT instead of Basic
+                // Allow anonymous access for public endpoints
+                .anonymous(Customizer.withDefaults())
+                // HTTP Basic auth for protected endpoints
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
@@ -57,6 +62,7 @@ public class SecurityConfig {
 
         // Exact origins you want to allow
         cfg.setAllowedOrigins(List.of(
+                "http://localhost:8080",
                 "http://localhost:5173",
                 "https://dj3eozung04ja.cloudfront.net",
                 "https://api.iit-scp.click"

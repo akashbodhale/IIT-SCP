@@ -12,7 +12,6 @@ public record ProjectSummaryDto(
         UUID projectId,
         UUID ownerId,
         String title,
-        
         String description,
         String category,
         DifficultyLevel difficultyLevel,
