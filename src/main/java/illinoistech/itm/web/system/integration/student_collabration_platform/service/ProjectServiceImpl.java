@@ -1,6 +1,7 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.service;
 
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ProjectSummaryDto;
+import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ProjectUpdateRequest;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project.ProjectStatus;
 import illinoistech.itm.web.system.integration.student_collabration_platform.repository.ProjectRepository;
@@ -8,10 +9,9 @@ import illinoistech.itm.web.system.integration.student_collabration_platform.rep
 import illinoistech.itm.web.system.integration.student_collabration_platform.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 
-import java.sql.Time;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +19,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import static org.springframework.data.jpa.domain.Specification.allOf;
 
 
-@Slf4j
+
 @Service
 @Transactional(readOnly = true)
 public class ProjectServiceImpl implements ProjectService {
@@ -72,6 +75,7 @@ public class ProjectServiceImpl implements ProjectService {
         proj.setCreatedAt(LocalDateTime.now());
         proj.setUpdatedAt(LocalDateTime.now());
         proj.setPublishedAt(LocalDateTime.now());
+        proj.setSpecificRequirements(dto.specificRequirements());
 
         var saved = repo.save(proj);
         log.info("created project: {}", saved);
@@ -89,6 +93,31 @@ public class ProjectServiceImpl implements ProjectService {
         );
 
         return repo.findAll(spec, pageable).map(this::toDto);
+    }
+    @Transactional
+    @Override
+    public ProjectSummaryDto update(UUID id, ProjectUpdateRequest req) {
+
+        Project entity = repo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found: " + id));
+
+        // Map ALL fields from req (full replace semantics)
+        entity.setTitle(req.title());
+        entity.setDescription(req.description());
+        entity.setCategory(req.category());
+        entity.setDifficultyLevel(req.difficultyLevel());
+        entity.setDuration(req.duration());
+        entity.setDurationMonths(req.durationMonths());
+        entity.setDeadline(req.deadline());
+        entity.setStartDate(req.startDate());
+        entity.setEndDate(req.endDate());
+        entity.setStatus(req.status());
+        entity.setSpecificRequirements(req.requirments());
+
+        entity.setUpdatedAt(java.time.LocalDateTime.now());
+
+        Project saved = repo.save(entity);
+        log.info("updated project: {}", saved.getDurationMonths());
+        return ProjectSummaryDto.fromEntity(saved);
     }
 
     private ProjectSummaryDto toDto(Project p) {
@@ -110,7 +139,9 @@ public class ProjectServiceImpl implements ProjectService {
                 p.getCreatedAt(),
                 p.getUpdatedAt(),
                 p.getPublishedAt(),
-                p.getRequirements()
+                p.getSpecificRequirements(),
+                p.getProjectTimeline(),
+                p.getSkills()
         );
     }
 }

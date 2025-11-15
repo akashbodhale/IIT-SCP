@@ -9,7 +9,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.*;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
@@ -19,38 +21,42 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                // Disable CSRF for APIs (stateless, no cookies used for auth)
                 .csrf(csrf -> csrf.disable())
+
+                // Enable CORS using the configurationSource() bean
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                // For APIs, stateless is usually better. Remove if you rely on server sessions.
+
+                // For REST APIs, stateless sessions are usually the right choice
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 .authorizeHttpRequests(auth -> auth
-                        // Preflight
+                        // Allow all CORS preflight requests
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // Public endpoints - explicitly allow POST to create
+                        // Public endpoints (no auth required)
                         .requestMatchers(
                                 "/api/auth/signup",
                                 "/api/auth/signin",
                                 "/actuator/health",
-                                "/actuator/health/**",
-                                "/api/projects/all",
-                                "/api/projects/create"
-                                // add "/api/auth/home" here ONLY if you want it public:
-                                // , "/api/auth/home"
+                                "/actuator/health/**"
                         ).permitAll()
-                        
-                        // Explicitly allow POST method for create endpoint
-                        .requestMatchers(HttpMethod.POST, "/api/projects/create").permitAll()
 
-                        // Everything else under /api/auth requires authentication
+                        // TEMP: allow all project endpoints (GET/POST/PUT/DELETE) without auth
+                        // so you can test from Postman and frontend easily
+                        .requestMatchers("/api/projects/**").permitAll()
+
+                        // Any other /api/auth/** endpoints require authentication
                         .requestMatchers("/api/auth/**").authenticated()
 
-                        // Any other endpoints require auth
+                        // Everything else requires authentication
                         .anyRequest().authenticated()
                 )
-                // Allow anonymous access for public endpoints
+
+                // Allow anonymous access for the permitAll() endpoints
                 .anonymous(Customizer.withDefaults())
-                // HTTP Basic auth for protected endpoints
+
+                // Use HTTP Basic auth for protected endpoints (good enough for testing)
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
@@ -60,18 +66,18 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
 
-        // Exact origins you want to allow
+        // Allowed origins - adjust when you add more environments
         cfg.setAllowedOrigins(List.of(
-                "http://localhost:8080",
-                "http://localhost:5173",
-                "https://dj3eozung04ja.cloudfront.net",
-                "https://api.iit-scp.click"
+                "http://localhost:8080",   // if backend serves something
+                "http://localhost:5173",   // Vite dev server
+                "https://dj3eozung04ja.cloudfront.net", // your CloudFront React app
+                "https://api.iit-scp.click"             // production API domain
         ));
 
-        // Allowed methods
+        // Allowed HTTP methods
         cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        // Allowed request headers (names only, not values)
+        // Allowed request headers
         cfg.setAllowedHeaders(List.of(
                 "Authorization",
                 "Content-Type",
@@ -80,11 +86,14 @@ public class SecurityConfig {
                 "X-Requested-With"
         ));
 
-        // Expose response headers your frontend needs to read
+        // Headers exposed to the browser (frontend can read these)
         cfg.setExposedHeaders(List.of("Location"));
 
+        // Allow credentials (cookies/auth headers) from allowed origins
         cfg.setAllowCredentials(true);
-        cfg.setMaxAge(3600L); // cache preflight for 1 hour
+
+        // Cache preflight response for 1 hour
+        cfg.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", cfg);

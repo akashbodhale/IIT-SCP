@@ -102,11 +102,18 @@ public class Project {
     private Integer applicationsCount = 0;
 
 
-    @Column(name = "requirements", columnDefinition = "TEXT")
-    private String requirements;
+    @Column(name = "specific_requirements", columnDefinition = "TEXT")
+    private String specific_requirements;
 
     @Column(name = "deliverables", columnDefinition = "TEXT")
     private String deliverables;
+
+    @Column(name = "skills", columnDefinition = "TEXT")
+    private String skills;
+
+    //Project Timeline
+    @Column(name = "project_timeline", columnDefinition = "TEXT")
+    private String project_timeline;
 
     // ===== Audit =====
     @CreationTimestamp
@@ -167,8 +174,8 @@ public class Project {
     public Integer getApplicationsCount() { return applicationsCount; }
     public void setApplicationsCount(Integer applicationsCount) { this.applicationsCount = applicationsCount; }
     
-    public String getRequirements() { return requirements; }
-    public void setRequirements(String requirements) { this.requirements = requirements; }
+    public String getSpecificRequirements() { return specific_requirements; }
+    public void setSpecificRequirements(String requirements) { this.specific_requirements = requirements; }
     
     public String getDeliverables() { return deliverables; }
     public void setDeliverables(String deliverables) { this.deliverables = deliverables; }
@@ -181,4 +188,11 @@ public class Project {
     
     public LocalDateTime getPublishedAt() { return publishedAt; }
     public void setPublishedAt(LocalDateTime publishedAt) { this.publishedAt = publishedAt; }
+
+    public String getSkills() { return skills; }
+    public void setSkills(String skills) { this.skills = skills; }
+
+    public String getProjectTimeline() {return project_timeline;}
+
+    public void setProjectTimeline(String project_timeline) {this.project_timeline = project_timeline;}
 }

@@ -1,5 +1,6 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.controller;
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ProjectSummaryDto;
+import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ProjectUpdateRequest;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project.ProjectStatus;
 import illinoistech.itm.web.system.integration.student_collabration_platform.service.ProjectService;
@@ -58,6 +59,16 @@ public class ProjectController {
         URI location = uriBuilder.path("/api/projects/{id}").buildAndExpand(saved.projectId()).toUri();
 
         return ResponseEntity.created(location).body(saved);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProjectSummaryDto> update(
+            @PathVariable UUID id,
+            @RequestBody ProjectUpdateRequest request
+    ) {
+        log.info("Inside {} - update (PUT) method for id={}", ProjectController.class.getSimpleName(), id);
+        ProjectSummaryDto updated = projectSvc.update(id, request);
+        return ResponseEntity.ok(updated);
     }
 
     @GetMapping

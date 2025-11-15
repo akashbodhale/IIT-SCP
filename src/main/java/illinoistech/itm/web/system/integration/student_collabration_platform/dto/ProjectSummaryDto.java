@@ -1,8 +1,8 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.dto;
 
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project;
-import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project.ProjectStatus;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project.DifficultyLevel;
+import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project.ProjectStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,8 +25,11 @@ public record ProjectSummaryDto(
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         LocalDateTime publishedAt,
-        String requirements
+        String specificRequirements,
+        String projectTimeline,
+        String skills
 ) {
+
     public static ProjectSummaryDto fromEntity(Project project) {
         return new ProjectSummaryDto(
                 project.getProjectId(),
@@ -45,7 +48,9 @@ public record ProjectSummaryDto(
                 project.getCreatedAt(),
                 project.getUpdatedAt(),
                 project.getPublishedAt(),
-                project.getRequirements()
+                project.getSpecificRequirements(),
+                project.getProjectTimeline(),
+                project.getSkills()
         );
     }
 }
