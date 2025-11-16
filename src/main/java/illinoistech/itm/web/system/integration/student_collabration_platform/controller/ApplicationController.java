@@ -1,0 +1,56 @@
+package illinoistech.itm.web.system.integration.student_collabration_platform.controller;
+
+import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ApplicationSummaryDto;
+import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Application.ApplicationStatus;
+import illinoistech.itm.web.system.integration.student_collabration_platform.service.ApplicationService;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@Slf4j
+@RestController
+@RequestMapping("/api/applications")
+public class ApplicationController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationController.class);
+    private final ApplicationService appSvc;
+
+    public ApplicationController(ApplicationService appSvc) {
+        this.appSvc = appSvc;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApplicationSummaryDto> getOne(@PathVariable("id") UUID id) {
+        logger.info("Inside {} - getOne method.", ApplicationController.class.getSimpleName());
+        return ResponseEntity.ok(appSvc.getById(id));
+    }
+
+    /** Feed for “My Applications” page with snake_case response keys */
+    @GetMapping
+    public ResponseEntity<Page<ApplicationSummaryDto>> myApplications(
+            @RequestParam(value = "student_id", required = false) UUID studentIdSnake,
+            @RequestParam(value = "studentId",  required = false) UUID studentIdCamel,
+            @RequestParam(value = "status",     required = false) ApplicationStatus status,
+            @RequestParam(value = "page",       defaultValue = "0") int page,
+            @RequestParam(value = "size",       defaultValue = "20") int size,
+            @RequestParam(value = "sort",       defaultValue = "updatedAt,desc") String sort
+    ) {
+        logger.info("Inside {} - myApplications method.", ApplicationController.class.getSimpleName());
+        UUID studentId = (studentIdSnake != null) ? studentIdSnake : studentIdCamel;
+        Pageable pageable = buildPageable(page, size, sort);
+        return ResponseEntity.ok(appSvc.findMyApplications(studentId, status, pageable));
+    }
+
+    private Pageable buildPageable(int page, int size, String sort) {
+        String[] parts = sort.split(",", 2);
+        String field = parts[0];
+        Sort.Direction dir = (parts.length > 1 && parts[1].equalsIgnoreCase("asc"))
+                ? Sort.Direction.ASC : Sort.Direction.DESC;
+        return PageRequest.of(page, size, Sort.by(dir, field));
+    }
+}
