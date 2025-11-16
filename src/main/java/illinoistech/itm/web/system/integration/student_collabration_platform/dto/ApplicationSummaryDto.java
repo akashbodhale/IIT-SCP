@@ -22,7 +22,8 @@ import java.util.UUID;
         "updated_at",
         "project_id",
         "student_id",
-        "title"
+        "title",
+        "company_name"
 })
 public record ApplicationSummaryDto(
         @JsonProperty("application_id") UUID applicationId,
@@ -35,11 +36,13 @@ public record ApplicationSummaryDto(
         @JsonProperty("updated_at") OffsetDateTime updatedAt,
         @JsonProperty("project_id") UUID projectId,
         @JsonProperty("student_id") UUID studentId,
-        @JsonProperty("title") String title
+        @JsonProperty("title") String title,
+       @JsonProperty("company_name") String companyName
 ) {
     public static ApplicationSummaryDto fromEntity(Application a) {
         Project p = a.getProject();
         var Title =p.getTitle();
+        var CompanyName = a.getIndustryProfile().getCompanyName();
 
         UUID projId = (p != null) ? p.getProjectId() : null;
 
@@ -58,7 +61,8 @@ public record ApplicationSummaryDto(
                 a.getUpdatedAt(),
                 projId,
                 studId,
-                Title
+                Title,
+                CompanyName
         );
     }
 }

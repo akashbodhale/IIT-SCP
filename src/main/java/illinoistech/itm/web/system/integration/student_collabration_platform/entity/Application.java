@@ -1,6 +1,5 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.entity;
 
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -17,7 +16,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"project", "student"})
+@ToString(exclude = {"project", "student", "industryProfile"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(
@@ -45,13 +44,23 @@ public class Application {
     private Project project;
 
     // FK -> student_profiles(profile_id)
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    // now optional because sometimes application will be from industry instead of student
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(
             name = "student_id",
-            nullable = false,
+            nullable = true,
             foreignKey = @ForeignKey(name = "fk_applications_student")
     )
     private StudentProfile student;
+
+    // FK -> industry_profiles(profile_id)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(
+            name = "industry_profile_id",
+            nullable = true,
+            foreignKey = @ForeignKey(name = "fk_applications_industry_profile")
+    )
+    private IndustryProfile industryProfile;
 
     @Size(max = 500)
     @Pattern(regexp = "^https?://.*", message = "coverLetterUrl must start with http:// or https://")
@@ -85,8 +94,6 @@ public class Application {
     @Column(name = "created_at", nullable = false, columnDefinition = "timestamp with time zone")
     private OffsetDateTime createdAt;
 
-
-
     public enum ApplicationStatus {
         PENDING,
         REVIEWED,
@@ -94,5 +101,27 @@ public class Application {
         REJECTED,
         WITHDRAWN
     }
-}
 
+    /**
+     * Ensure that exactly one of student or industryProfile is set.
+     * If student profile is there then industry_profile_id must be null, and vice versa.
+     */
+    @PrePersist
+    @PreUpdate
+    private void validateApplicantType() {
+        boolean hasStudent = this.student != null;
+        boolean hasIndustry = this.industryProfile != null;
+
+        if (hasStudent && hasIndustry) {
+            throw new IllegalStateException(
+                    "Application cannot have both student and industry profile. Only one is allowed."
+            );
+        }
+
+        if (!hasStudent && !hasIndustry) {
+            throw new IllegalStateException(
+                    "Application must have either a student or an industry profile."
+            );
+        }
+    }
+}

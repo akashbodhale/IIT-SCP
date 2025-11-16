@@ -5,6 +5,7 @@ import illinoistech.itm.web.system.integration.student_collabration_platform.ent
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Application.ApplicationStatus;
 import illinoistech.itm.web.system.integration.student_collabration_platform.repository.ApplicationRepository;
 import illinoistech.itm.web.system.integration.student_collabration_platform.repository.ApplicationSpecs;
+import illinoistech.itm.web.system.integration.student_collabration_platform.repository.IndustryProfileRepository;
 import illinoistech.itm.web.system.integration.student_collabration_platform.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -20,16 +21,16 @@ import static org.springframework.data.jpa.domain.Specification.allOf;
 @Transactional(readOnly = true)
 public class ApplicationServiceImpl implements ApplicationService {
 
-    private final ApplicationRepository repo;
+    private final ApplicationRepository appRepo;
     private final ProjectRepository  projectRepo;
-    public ApplicationServiceImpl(ApplicationRepository repo,  ProjectRepository projectRepo) {
-        this.repo = repo;
+    public ApplicationServiceImpl(ApplicationRepository repo, ProjectRepository projectRepo, IndustryProfileRepository industryProfileRepo) {
+        this.appRepo = repo;
         this.projectRepo= projectRepo;
     }
 
     @Override
     public ApplicationSummaryDto getById(java.util.UUID appId) {
-        Application a = repo.findById(appId)
+        Application a = appRepo.findById(appId)
                 .orElseThrow(() -> new EntityNotFoundException("Application not found: " + appId));
         ProjectRepository pr = projectRepo.findByProjectId(a.getProject().getProjectId());
         log.info("Project Repository: " + pr);
@@ -45,6 +46,6 @@ public class ApplicationServiceImpl implements ApplicationService {
                 ApplicationSpecs.hasStudent(studentId),
                 ApplicationSpecs.hasStatus(status)
         );
-        return repo.findAll(spec, pageable).map(ApplicationSummaryDto::fromEntity);
+        return appRepo.findAll(spec, pageable).map(ApplicationSummaryDto::fromEntity);
     }
 }
