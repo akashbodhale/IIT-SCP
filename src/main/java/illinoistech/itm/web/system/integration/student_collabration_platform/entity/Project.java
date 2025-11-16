@@ -73,19 +73,19 @@ public class Project {
     @Column(name = "duration", nullable = false, length = 50) // e.g., "3 months"
     private String duration;
 
-    @Min(0)
-    @Column(name = "duration_months")
-    private Integer durationMonths;
+//    @Min(0)
+//    @Column(name = "duration_months")
+//    private Integer durationMonths;
 
     @NotNull
     @Column(name = "deadline", nullable = false)
     private LocalDate deadline;
 
-    @Column(name = "start_date")
-    private LocalDate startDate;
+    @Column(name = "posted_date")
+    private LocalDate postedDate;
 
-    @Column(name = "end_date")
-    private LocalDate endDate;
+//    @Column(name = "end_date")
+//    private LocalDate endDate;
 
 
     public enum ProjectStatus { DRAFT, OPEN, IN_PROGRESS, COMPLETED, CANCELLED, CLOSED }
@@ -111,9 +111,6 @@ public class Project {
     @Column(name = "skills", columnDefinition = "TEXT")
     private String skills;
 
-    //Project Timeline
-    @Column(name = "project_timeline", columnDefinition = "TEXT")
-    private String project_timeline;
 
     // ===== Audit =====
     @CreationTimestamp
@@ -126,6 +123,9 @@ public class Project {
 
     @Column(name = "published_at")
     private LocalDateTime publishedAt;
+
+    @Column(name="project_objective")
+    private String projectObjective;
 
     // ===== Defaults / Guards =====
     @PrePersist
@@ -155,18 +155,14 @@ public class Project {
     
     public String getDuration() { return duration; }
     public void setDuration(String duration) { this.duration = duration; }
-    
-    public Integer getDurationMonths() { return durationMonths; }
-    public void setDurationMonths(Integer durationMonths) { this.durationMonths = durationMonths; }
-    
+
+
     public LocalDate getDeadline() { return deadline; }
     public void setDeadline(LocalDate deadline) { this.deadline = deadline; }
-    
-    public LocalDate getStartDate() { return startDate; }
-    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
-    
-    public LocalDate getEndDate() { return endDate; }
-    public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
+
+   public LocalDate getPostedDate() { return postedDate; }
+    public void setPostedDate(LocalDate postedDate) { this.postedDate = postedDate; }
+
     
     public ProjectStatus getStatus() { return status; }
     public void setStatus(ProjectStatus status) { this.status = status; }
@@ -192,7 +188,11 @@ public class Project {
     public String getSkills() { return skills; }
     public void setSkills(String skills) { this.skills = skills; }
 
-    public String getProjectTimeline() {return project_timeline;}
+    public String getProjectObjective() {
+        return projectObjective;
+    }
 
-    public void setProjectTimeline(String project_timeline) {this.project_timeline = project_timeline;}
+    public void setProjectObjective(String projectObjective) {
+        this.projectObjective = projectObjective;
+    }
 }

@@ -67,10 +67,10 @@ public class ProjectServiceImpl implements ProjectService {
         proj.setDifficultyLevel(dto.difficultyLevel());
         proj.setCategory(dto.category());
         proj.setDuration(dto.duration());
-        proj.setDurationMonths(dto.durationMonths());
+
         proj.setDeadline(dto.deadline());
-        proj.setStartDate(dto.startDate());
-        proj.setEndDate(dto.endDate());
+        proj.setPostedDate(dto.postedDate());
+
         proj.setStatus(dto.status());
         proj.setCreatedAt(LocalDateTime.now());
         proj.setUpdatedAt(LocalDateTime.now());
@@ -106,17 +106,16 @@ public class ProjectServiceImpl implements ProjectService {
         entity.setCategory(req.category());
         entity.setDifficultyLevel(req.difficultyLevel());
         entity.setDuration(req.duration());
-        entity.setDurationMonths(req.durationMonths());
+
         entity.setDeadline(req.deadline());
-        entity.setStartDate(req.startDate());
-        entity.setEndDate(req.endDate());
+        entity.setPostedDate(req.startDate());
         entity.setStatus(req.status());
         entity.setSpecificRequirements(req.requirments());
 
         entity.setUpdatedAt(java.time.LocalDateTime.now());
 
         Project saved = repo.save(entity);
-        log.info("updated project: {}", saved.getDurationMonths());
+        log.info("updated project: {}", saved.getDeadline());
         return ProjectSummaryDto.fromEntity(saved);
     }
 
@@ -130,19 +129,19 @@ public class ProjectServiceImpl implements ProjectService {
                 p.getCategory(),
                 p.getDifficultyLevel(),
                 p.getDuration(),
-                p.getDurationMonths(),
                 p.getDeadline(),
-                p.getStartDate(),
-                p.getEndDate(),
+                p.getPostedDate(),
                 p.getStatus(),
                 p.getApplicationsCount(),
+                p.getSpecificRequirements(),
+                p.getDeliverables(),
+                p.getSkills(),
                 p.getCreatedAt(),
                 p.getUpdatedAt(),
                 p.getPublishedAt(),
-                p.getSpecificRequirements(),
-                p.getProjectTimeline(),
-                p.getSkills()
+                p.getProjectObjective()
         );
     }
+
 }
 
