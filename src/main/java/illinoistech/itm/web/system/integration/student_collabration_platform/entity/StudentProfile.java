@@ -98,8 +98,8 @@ public class StudentProfile {
     public String getUniversity() { return university; }
     public void setUniversity(String university) { this.university = university; }
     
-    public String getStudentId() { return studentId; }
-    public void setStudentId(String studentId) { this.studentId = studentId; }
+    public String getstudentId() { return studentId; }
+    public void setstudentId(String studentId) { this.studentId = studentId; }
     
     public String getMajor() { return major; }
     public void setMajor(String major) { this.major = major; }

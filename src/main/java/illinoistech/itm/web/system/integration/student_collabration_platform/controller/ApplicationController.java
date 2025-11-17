@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -25,9 +26,9 @@ public class ApplicationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApplicationSummaryDto> getOne(@PathVariable("id") UUID id) {
+    public ResponseEntity<List<ApplicationSummaryDto>> getOne(@PathVariable("id") UUID id) {
         logger.info("Inside {} - getOne method.", ApplicationController.class.getSimpleName());
-        return ResponseEntity.ok(appSvc.getById(id));
+        return ResponseEntity.ok(appSvc.getByUserId(id));
     }
 
     /** Feed for “My Applications” page with snake_case response keys */

@@ -5,9 +5,10 @@ import illinoistech.itm.web.system.integration.student_collabration_platform.ent
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ApplicationService {
-    ApplicationSummaryDto getById(UUID appId);
+    List<ApplicationSummaryDto> getByUserId(UUID userId);
     Page<ApplicationSummaryDto> findMyApplications(UUID studentId, ApplicationStatus status, Pageable pageable);
 }

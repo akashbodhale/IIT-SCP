@@ -42,7 +42,7 @@ public record ApplicationSummaryDto(
     public static ApplicationSummaryDto fromEntity(Application a) {
         Project p = a.getProject();
         var Title =p.getTitle();
-        var CompanyName = a.getIndustryProfile().getCompanyName();
+        var CompanyName = a.getIndustry().getCompanyName();
 
         UUID projId = (p != null) ? p.getProjectId() : null;
 

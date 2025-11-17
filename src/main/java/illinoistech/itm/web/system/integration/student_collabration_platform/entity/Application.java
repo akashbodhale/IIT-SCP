@@ -16,7 +16,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"project", "student", "industryProfile"})
+@ToString(exclude = {"project", "student", "industry"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(
@@ -47,7 +47,7 @@ public class Application {
     // now optional because sometimes application will be from industry instead of student
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(
-            name = "student_id",
+            name = "student_profile_id",
             nullable = true,
             foreignKey = @ForeignKey(name = "fk_applications_student")
     )
@@ -60,7 +60,7 @@ public class Application {
             nullable = true,
             foreignKey = @ForeignKey(name = "fk_applications_industry_profile")
     )
-    private IndustryProfile industryProfile;
+    private IndustryProfile industry;
 
     @Size(max = 500)
     @Pattern(regexp = "^https?://.*", message = "coverLetterUrl must start with http:// or https://")
@@ -110,7 +110,7 @@ public class Application {
     @PreUpdate
     private void validateApplicantType() {
         boolean hasStudent = this.student != null;
-        boolean hasIndustry = this.industryProfile != null;
+        boolean hasIndustry = this.industry != null;
 
         if (hasStudent && hasIndustry) {
             throw new IllegalStateException(
