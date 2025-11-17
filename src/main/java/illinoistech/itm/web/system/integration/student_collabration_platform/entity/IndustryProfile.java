@@ -103,11 +103,40 @@ public class IndustryProfile {
         if (verificationStatus == null) verificationStatus = CompanyStatus.PENDING;
     }
 
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
+    // Manual getters and setters (Lombok annotation processing not working)
+    public UUID getProfileId() { return profileId; }
+    public void setProfileId(UUID profileId) { this.profileId = profileId; }
+    
+    public Users getUser() { return user; }
+    public void setUser(Users user) { this.user = user; }
+    
+    public String getCompanyName() { return companyName; }
+    public void setCompanyName(String companyName) { this.companyName = companyName; }
+    
+    public String getPosition() { return position; }
+    public void setPosition(String position) { this.position = position; }
+    
+    public companySize getCompanySize() { return companySize; }
+    public void setCompanySize(companySize companySize) { this.companySize = companySize; }
+    
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    
+    public String getHeadquartersLocation() { return headquartersLocation; }
+    public void setHeadquartersLocation(String headquartersLocation) { this.headquartersLocation = headquartersLocation; }
+    
+    public String getLinkedinUrl() { return linkedinUrl; }
+    public void setLinkedinUrl(String linkedinUrl) { this.linkedinUrl = linkedinUrl; }
+    
+    public CompanyStatus getVerificationStatus() { return verificationStatus; }
+    public void setVerificationStatus(CompanyStatus verificationStatus) { this.verificationStatus = verificationStatus; }
+    
+    public String getVerificationDocument() { return verificationDocument; }
+    public void setVerificationDocument(String verificationDocument) { this.verificationDocument = verificationDocument; }
+    
+    public OffsetDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
+    
+    public OffsetDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

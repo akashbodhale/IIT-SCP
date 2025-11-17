@@ -3,7 +3,7 @@
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "1024",
-  "memory": "3072",
+  "memory": "2048",
   "executionRoleArn": "arn:aws:iam::514190630378:role/ecsTaskExecutionRole",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
@@ -19,6 +19,12 @@
           "containerPort": 8080,
           "protocol": "tcp",
           "appProtocol": "http"
+        }
+      ],
+      "environment": [
+        {
+          "name": "JAVA_TOOL_OPTIONS",
+          "value": "-Xms512m -Xmx1024m"
         }
       ],
       "logConfiguration": {

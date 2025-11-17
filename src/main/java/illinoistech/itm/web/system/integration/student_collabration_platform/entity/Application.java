@@ -124,4 +124,38 @@ public class Application {
             );
         }
     }
+
+    // Manual getters and setters (Lombok annotation processing not working)
+    public UUID getApplicationId() { return applicationId; }
+    public void setApplicationId(UUID applicationId) { this.applicationId = applicationId; }
+    
+    public Project getProject() { return project; }
+    public void setProject(Project project) { this.project = project; }
+    
+    public StudentProfile getStudent() { return student; }
+    public void setStudent(StudentProfile student) { this.student = student; }
+    
+    public IndustryProfile getIndustry() { return industry; }
+    public void setIndustry(IndustryProfile industry) { this.industry = industry; }
+    
+    public String getCoverLetterUrl() { return coverLetterUrl; }
+    public void setCoverLetterUrl(String coverLetterUrl) { this.coverLetterUrl = coverLetterUrl; }
+    
+    public String getPortfolioLink() { return portfolioLink; }
+    public void setPortfolioLink(String portfolioLink) { this.portfolioLink = portfolioLink; }
+    
+    public ApplicationStatus getStatus() { return status; }
+    public void setStatus(ApplicationStatus status) { this.status = status; }
+    
+    public String getReviewNotes() { return reviewNotes; }
+    public void setReviewNotes(String reviewNotes) { this.reviewNotes = reviewNotes; }
+    
+    public OffsetDateTime getAppliedAt() { return appliedAt; }
+    public void setAppliedAt(OffsetDateTime appliedAt) { this.appliedAt = appliedAt; }
+    
+    public OffsetDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
+    
+    public OffsetDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
 }
