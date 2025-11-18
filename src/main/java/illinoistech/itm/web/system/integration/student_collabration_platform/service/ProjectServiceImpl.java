@@ -88,6 +88,9 @@ public class ProjectServiceImpl implements ProjectService {
         proj.setUpdatedAt(LocalDateTime.now());
         proj.setPublishedAt(LocalDateTime.now());
         proj.setSpecificRequirements(dto.specificRequirements());
+        proj.setDeliverables(dto.deliverables());
+        proj.setProjectObjective(dto.project_objectives());
+        proj.setSkills(dto.skills());
 
         var saved = repo.save(proj);
         log.info("created project: {}", saved);
