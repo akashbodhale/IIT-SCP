@@ -23,10 +23,11 @@ public record ProjectSummaryDto(
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         LocalDateTime publishedAt,
-        String project_objectives
+        String project_objectives,
+        String company
 ) {
 
-    public static ProjectSummaryDto fromEntity(Project project) {
+    public static ProjectSummaryDto fromEntity(Project project,String company) {
         return new ProjectSummaryDto(
                 project.getProjectId(),
                 project.getOwner() != null ? project.getOwner().getUserId() : null,
@@ -45,7 +46,9 @@ public record ProjectSummaryDto(
                 project.getCreatedAt(),
                 project.getUpdatedAt(),
                 project.getPublishedAt(),
-                project.getProjectObjective()
+                project.getProjectObjective(),
+                company
+
         );
     }
 }

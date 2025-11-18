@@ -2,8 +2,10 @@ package illinoistech.itm.web.system.integration.student_collabration_platform.se
 
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ProjectSummaryDto;
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ProjectUpdateRequest;
+import illinoistech.itm.web.system.integration.student_collabration_platform.entity.IndustryProfile;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project.ProjectStatus;
+import illinoistech.itm.web.system.integration.student_collabration_platform.repository.IndustryProfileRepository;
 import illinoistech.itm.web.system.integration.student_collabration_platform.repository.ProjectRepository;
 import illinoistech.itm.web.system.integration.student_collabration_platform.repository.ProjectSpecs;
 import illinoistech.itm.web.system.integration.student_collabration_platform.repository.UserRepository;
@@ -12,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
@@ -35,10 +38,12 @@ public class ProjectServiceImpl implements ProjectService {
     private static final Logger log = LoggerFactory.getLogger(ProjectServiceImpl.class);
     private final ProjectRepository repo;
     private final UserRepository userRepository;
+    private final IndustryProfileRepository industryProfileRepo;
 
-    public ProjectServiceImpl(ProjectRepository repo, UserRepository userRepository) {
+    public ProjectServiceImpl(ProjectRepository repo, UserRepository userRepository, IndustryProfileRepository industryProfileRepo) {
         this.repo = repo;
         this.userRepository = userRepository;
+        this.industryProfileRepo = industryProfileRepo;
     }
 
     @Override
@@ -50,10 +55,17 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<ProjectSummaryDto> getAll() {
-        return repo.findAll()
-                .stream()
-                .map(ProjectSummaryDto::fromEntity)
-                .toList();
+        List<Project> all = repo.findAll();
+
+        List<ProjectSummaryDto> result = new ArrayList<>(all.size());
+        for (Project p : all) {
+            UUID ownerId = (p.getOwner() != null) ? p.getOwner().getUserId() : null;
+            String company = (ownerId != null)
+                    ? industryProfileRepo.findCompanyNameByUserId(ownerId).orElse(null)
+                    : null;
+            result.add(ProjectSummaryDto.fromEntity(p, company));
+        }
+        return result;
     }
 
     @Transactional
@@ -79,7 +91,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         var saved = repo.save(proj);
         log.info("created project: {}", saved);
-        return ProjectSummaryDto.fromEntity(saved);
+        return ProjectSummaryDto.fromEntity(saved,"");
     }
 
     @Override
@@ -94,6 +106,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         return repo.findAll(spec, pageable).map(this::toDto);
     }
+
     @Transactional
     @Override
     public ProjectSummaryDto update(UUID id, ProjectUpdateRequest req) {
@@ -116,7 +129,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         Project saved = repo.save(entity);
         log.info("updated project: {}", saved.getDeadline());
-        return ProjectSummaryDto.fromEntity(saved);
+        return ProjectSummaryDto.fromEntity(saved,"");
     }
 
     private ProjectSummaryDto toDto(Project p) {
@@ -139,7 +152,8 @@ public class ProjectServiceImpl implements ProjectService {
                 p.getCreatedAt(),
                 p.getUpdatedAt(),
                 p.getPublishedAt(),
-                p.getProjectObjective()
+                p.getProjectObjective(),
+                ""
         );
     }
 
