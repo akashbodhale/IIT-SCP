@@ -87,6 +87,14 @@ public class ApplicationServiceImpl implements ApplicationService {
         throw new IllegalStateException("Unsupported user type for applications: " + userType);
     }
 
+    @Override
+    public List<ApplicationSummaryDto> getApplicationsByProjectId(UUID projectId) {
+        List<Application> apps = appRepo.findByProject_ProjectId(projectId);
+
+        return apps.stream()
+                .map(ApplicationSummaryDto::fromEntity)
+                .toList();
+    }
 
 
     @Override

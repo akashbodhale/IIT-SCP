@@ -30,6 +30,13 @@ public class ApplicationController {
         logger.info("Inside {} - getOne method.", ApplicationController.class.getSimpleName());
         return ResponseEntity.ok(appSvc.getByUserId(id));
     }
+    @GetMapping("/project/{id}")
+    public ResponseEntity<List<ApplicationSummaryDto>> getApplicationByProjectId(@PathVariable("id") UUID id)
+    {
+        logger.info("Inside {} - getApplicationByProjectId method.", ApplicationController.class.getSimpleName());
+
+        return ResponseEntity.ok(appSvc.getApplicationsByProjectId(id));
+    }
 
     /** Feed for “My Applications” page with snake_case response keys */
     @GetMapping

@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface ApplicationService {
     List<ApplicationSummaryDto> getByUserId(UUID userId);
     Page<ApplicationSummaryDto> findMyApplications(UUID studentId, ApplicationStatus status, Pageable pageable);
+    List<ApplicationSummaryDto> getApplicationsByProjectId(UUID projectId);
 }

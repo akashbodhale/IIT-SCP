@@ -9,6 +9,6 @@ import java.util.UUID;
 
 public interface ApplicationRepository extends JpaRepository<Application, UUID>, JpaSpecificationExecutor<Application> {
     List<Application> findByStudent_profileId(UUID profileId);
-
     List<Application> findByIndustry_profileId(UUID profileId);
+    List<Application> findByProject_ProjectId(UUID projectId);
 }
