@@ -142,8 +142,14 @@ public class ProjectServiceImpl implements ProjectService {
         entity.setDuration(req.duration());
 
         entity.setDeadline(req.deadline());
-        entity.setPostedDate(req.startDate());
+        entity.setPostedDate(req.postedDate());
         entity.setStatus(req.status());
+        entity.setSkills(req.skills());
+
+        entity.setDeliverables(req.deliverables());
+        entity.setProjectObjective(req.project_objectives());
+        entity.setSkills(req.skills());
+
         entity.setSpecificRequirements(req.requirments());
 
         entity.setUpdatedAt(java.time.LocalDateTime.now());

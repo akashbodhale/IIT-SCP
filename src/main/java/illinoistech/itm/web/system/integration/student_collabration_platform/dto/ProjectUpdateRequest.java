@@ -14,5 +14,12 @@ public record ProjectUpdateRequest(
         LocalDate startDate,
         LocalDate endDate,
         Project.ProjectStatus status,
-        String requirments
+        String requirments,
+        String deliverables,
+        String skills,
+        LocalDate postedDate,
+        String project_objectives,
+        String timeline,
+        Boolean isRemote
+
 ) {}
