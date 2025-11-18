@@ -50,6 +50,14 @@ public class ProjectController {
         return ResponseEntity.ok(projects);
     }
 
+    @GetMapping("/industry/{industry_id}")
+    public ResponseEntity<List<ProjectSummaryDto>> getAllProjectsByIndustry(@PathVariable("industry_id") UUID id) {
+        log.info("Inside {} - getAllProjectsByIndustry method.", ProjectController.class.getSimpleName());
+
+        List<ProjectSummaryDto> projects = projectSvc.getAllByIndustry(id);
+        return ResponseEntity.ok(projects);
+    }
+
     @PostMapping("/create")
     public ResponseEntity<ProjectSummaryDto> createProject(@RequestBody ProjectSummaryDto project, UriComponentsBuilder uriBuilder)
     {

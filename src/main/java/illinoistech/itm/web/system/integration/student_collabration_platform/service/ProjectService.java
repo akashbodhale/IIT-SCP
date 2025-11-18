@@ -27,4 +27,5 @@ public interface ProjectService {
     ProjectSummaryDto create(ProjectSummaryDto dto);
 
     ProjectSummaryDto update(UUID id, ProjectUpdateRequest req);
+    List<ProjectSummaryDto> getAllByIndustry(UUID industryId);
 }

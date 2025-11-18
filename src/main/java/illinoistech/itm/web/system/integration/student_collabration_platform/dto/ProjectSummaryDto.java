@@ -40,7 +40,7 @@ public record ProjectSummaryDto(
                 project.getPostedDate(),
                 project.getStatus(),
                 project.getApplicationsCount(),
-                project.getSpecificRequirements(),  // maps from specific_requirements
+                project.getSpecificRequirements(),
                 project.getDeliverables(),
                 project.getSkills(),
                 project.getCreatedAt(),

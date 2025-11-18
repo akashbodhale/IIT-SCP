@@ -68,6 +68,24 @@ public class ProjectServiceImpl implements ProjectService {
         return result;
     }
 
+    @Override
+    public List<ProjectSummaryDto> getAllByIndustry(UUID industryId) {
+
+        List<Project> projects = repo.findByOwner_UserId(industryId);
+
+
+
+        String company = industryProfileRepo
+                .findCompanyNameByUserId(industryId)
+                .orElse(null);
+
+        List<ProjectSummaryDto> result = new ArrayList<>(projects.size());
+        for (Project p : projects) {
+            result.add(ProjectSummaryDto.fromEntity(p, company));
+        }
+        return result;
+    }
+
     @Transactional
     @Override
     public ProjectSummaryDto create(ProjectSummaryDto dto) {
