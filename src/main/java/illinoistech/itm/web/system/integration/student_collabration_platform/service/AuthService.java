@@ -60,7 +60,7 @@ public class AuthService {
                 .map(StudentProfile::getMajor)
                 .orElse(null);
 
-        return new SignInResponse(user.getId(), user.getEmail(),user.getUserType(),user.getFirstName(),user.getLastName(), major);
+        return new SignInResponse(user.getId(),user.getUserId(), user.getEmail(),user.getUserType(),user.getFirstName(),user.getLastName(), major);
     }
 
     public static class UserNotFoundException extends RuntimeException {
