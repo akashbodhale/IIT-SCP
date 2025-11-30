@@ -23,7 +23,7 @@ import java.util.UUID;
         name = "applications",
         uniqueConstraints = @UniqueConstraint(
                 name = "uq_applications_project_student",
-                columnNames = {"project_id", "student_id"}
+                columnNames = {"project_id", "student_profile_id"}
         )
 )
 public class Application {

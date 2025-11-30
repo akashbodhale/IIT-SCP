@@ -12,4 +12,10 @@ public interface ApplicationService {
     List<ApplicationSummaryDto> getByUserId(UUID userId);
     Page<ApplicationSummaryDto> findMyApplications(UUID studentId, ApplicationStatus status, Pageable pageable);
     List<ApplicationSummaryDto> getApplicationsByProjectId(UUID projectId);
+
+    // NEW: create application (student or industry)
+    ApplicationSummaryDto applyToProject(UUID userId,
+                                         UUID projectId,
+                                         String coverLetterUrl,
+                                         String portfolioLink);
 }

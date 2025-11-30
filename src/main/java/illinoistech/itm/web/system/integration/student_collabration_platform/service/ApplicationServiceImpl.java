@@ -28,13 +28,20 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final UserRepository userRepo;
     private final StudentProfileRepository studentProfileRepo;
     private final IndustryProfileRepository industryProfileRepo;
-    private final ProjectRepository  projectRepo;
-    public ApplicationServiceImpl(ApplicationRepository repo, ProjectRepository projectRepo, IndustryProfileRepository industryProfileRepo,UserRepository userRepo, StudentProfileRepository studentProfileRepo) {
+    private final ProjectRepository projectRepo;
+
+    public ApplicationServiceImpl(
+            ApplicationRepository repo,
+            ProjectRepository projectRepo,
+            IndustryProfileRepository industryProfileRepo,
+            UserRepository userRepo,
+            StudentProfileRepository studentProfileRepo
+    ) {
         this.appRepo = repo;
-        this.projectRepo= projectRepo;
-        this.userRepo=userRepo;
+        this.projectRepo = projectRepo;
+        this.userRepo = userRepo;
         this.industryProfileRepo = industryProfileRepo;
-        this.studentProfileRepo=studentProfileRepo;
+        this.studentProfileRepo = studentProfileRepo;
     }
 
     @Override
@@ -44,7 +51,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Users user = userRepo.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + userId));
 
-        String userType = user.getUserType(); // e.g. "STUDENT" / "INDUSTRY"
+        String userType = user.getUserType(); // e.g. "student" / "industry"
 
         // 2. Branch by user type
         if ("student".equalsIgnoreCase(userType)) {
@@ -57,7 +64,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
             // 2b. Find all applications by student_profile_id
             List<Application> applications = appRepo
-                    .findByStudent_profileId(studentProfile.getProfileId());
+                    .findByStudent_ProfileId(studentProfile.getProfileId());
 
             // 2c. Map to DTOs
             return applications.stream()
@@ -75,7 +82,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
             // 2b. Find all applications by industry_profile_id
             List<Application> applications = appRepo
-                    .findByIndustry_profileId(industryProfile.getProfileId());
+                    .findByIndustry_ProfileId(industryProfile.getProfileId());
 
             // 2c. Map to DTOs
             return applications.stream()
@@ -96,9 +103,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .toList();
     }
 
-
     @Override
-    public Page<ApplicationSummaryDto> findMyApplications(java.util.UUID studentId,
+    public Page<ApplicationSummaryDto> findMyApplications(UUID studentId,
                                                           ApplicationStatus status,
                                                           Pageable pageable) {
         var spec = allOf(
@@ -106,5 +112,81 @@ public class ApplicationServiceImpl implements ApplicationService {
                 ApplicationSpecs.hasStatus(status)
         );
         return appRepo.findAll(spec, pageable).map(ApplicationSummaryDto::fromEntity);
+    }
+
+    // ========================= NEW METHOD =========================
+    // Student/Industry applies to a project
+    // - For STUDENT: enforces "only one application per project"
+    // - For INDUSTRY: no uniqueness restriction (can be added later if needed)
+    // ==============================================================
+    @Override
+    @Transactional // override class-level readOnly = true
+    public ApplicationSummaryDto applyToProject(UUID userId,
+                                                UUID projectId,
+                                                String coverLetterUrl,
+                                                String portfolioLink) {
+
+        // Load user
+        Users user = userRepo.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + userId));
+
+        String userType = user.getUserType(); // "student" / "industry"
+
+        // Load project
+        var project = projectRepo.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException("Project not found: " + projectId));
+
+        // ---------- STUDENT FLOW ----------
+        if ("student".equalsIgnoreCase(userType)) {
+
+            // Load student profile
+            StudentProfile studentProfile = studentProfileRepo
+                    .findByUser_UserId(userId)
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "Student profile not found for user: " + userId));
+
+            // Check if this student already applied to this project
+            boolean alreadyApplied = appRepo
+                    .existsByProject_ProjectIdAndStudent_ProfileId(projectId, studentProfile.getProfileId());
+
+            if (alreadyApplied) {
+                throw new IllegalStateException("You have already applied to this project.");
+            }
+
+            Application app = Application.builder()
+                    .project(project)
+                    .student(studentProfile)
+                    .coverLetterUrl(coverLetterUrl)
+                    .portfolioLink(portfolioLink)
+                    .status(ApplicationStatus.PENDING)
+                    .build();
+
+            Application saved = appRepo.save(app);
+            return ApplicationSummaryDto.fromEntity(saved);
+        }
+
+        // ---------- INDUSTRY FLOW ----------
+        if ("industry".equalsIgnoreCase(userType)) {
+
+            // Load industry profile
+            IndustryProfile industryProfile = industryProfileRepo
+                    .findByUser_UserId(userId)
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "Industry profile not found for user: " + userId));
+
+            Application app = Application.builder()
+                    .project(project)
+                    .industry(industryProfile)
+                    .coverLetterUrl(coverLetterUrl)
+                    .portfolioLink(portfolioLink)
+                    .status(ApplicationStatus.PENDING)
+                    .build();
+
+            Application saved = appRepo.save(app);
+            return ApplicationSummaryDto.fromEntity(saved);
+        }
+
+        // If some other userType sneaks in
+        throw new IllegalStateException("Unsupported user type for applications: " + userType);
     }
 }
