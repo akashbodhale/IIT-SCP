@@ -1,12 +1,14 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.controller;
 
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ApplicationSummaryDto;
+import illinoistech.itm.web.system.integration.student_collabration_platform.dto.CreateApplicationRequest;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Application.ApplicationStatus;
 import illinoistech.itm.web.system.integration.student_collabration_platform.service.ApplicationService;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,21 +20,23 @@ import java.util.List;
 @RequestMapping("/api/applications")
 public class ApplicationController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationController.class.getSimpleName());
     private final ApplicationService appSvc;
 
     public ApplicationController(ApplicationService appSvc) {
         this.appSvc = appSvc;
     }
 
+    // =================== EXISTING ENDPOINTS ===================
+
     @GetMapping("/{id}")
     public ResponseEntity<List<ApplicationSummaryDto>> getOne(@PathVariable("id") UUID id) {
         logger.info("Inside {} - getOne method.", ApplicationController.class.getSimpleName());
         return ResponseEntity.ok(appSvc.getByUserId(id));
     }
+
     @GetMapping("/project/{id}")
-    public ResponseEntity<List<ApplicationSummaryDto>> getApplicationByProjectId(@PathVariable("id") UUID id)
-    {
+    public ResponseEntity<List<ApplicationSummaryDto>> getApplicationByProjectId(@PathVariable("id") UUID id) {
         logger.info("Inside {} - getApplicationByProjectId method.", ApplicationController.class.getSimpleName());
 
         return ResponseEntity.ok(appSvc.getApplicationsByProjectId(id));
@@ -60,5 +64,29 @@ public class ApplicationController {
         Sort.Direction dir = (parts.length > 1 && parts[1].equalsIgnoreCase("asc"))
                 ? Sort.Direction.ASC : Sort.Direction.DESC;
         return PageRequest.of(page, size, Sort.by(dir, field));
+    }
+
+    // =================== NEW ENDPOINT ===================
+
+    /**
+     * Create a new application (student or industry user).
+     *
+     * For student users, this enforces:
+     *   "Student can apply only once for every project."
+     */
+    @PostMapping ("/apply")
+    public ResponseEntity<ApplicationSummaryDto> applyToProject(
+            @RequestBody CreateApplicationRequest request
+    ) {
+        logger.info("Inside {} - applyToProject method.", ApplicationController.class.getSimpleName());
+
+        ApplicationSummaryDto dto = appSvc.applyToProject(
+                request.getUserId(),
+                request.getProjectId(),
+                request.getCoverLetterUrl(),
+                request.getPortfolioLink()
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 }

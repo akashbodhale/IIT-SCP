@@ -26,6 +26,12 @@ import java.util.UUID;
                 @Index(name = "idx_projects_category", columnList = "category"),
                 @Index(name = "idx_projects_status",   columnList = "status"),
                 @Index(name = "idx_projects_deadline", columnList = "deadline")
+        },
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uq_projects_title",
+                        columnNames = {"title"}
+                )
         }
 )
 public class Project {
@@ -47,7 +53,7 @@ public class Project {
 
     @NotBlank
     @Size(max = 255)
-    @Column(name = "title", nullable = false, length = 255)
+    @Column(name = "title", nullable = false, length = 255, unique = true)
     private String title;
 
     @NotBlank

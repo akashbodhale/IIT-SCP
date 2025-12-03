@@ -42,7 +42,8 @@ public class SecurityConfig {
                                 "/actuator/health/**",
                                 "/api/applications/{id}",
                                 "/api/projects//industry/{industry_id}",
-                                "/api/applications/project/{id}"
+                                "/api/applications/project/{id}",
+                                "/api/applications/apply"
                         ).permitAll()
 
                         // TEMP: allow all project endpoints (GET/POST/PUT/DELETE) without auth
