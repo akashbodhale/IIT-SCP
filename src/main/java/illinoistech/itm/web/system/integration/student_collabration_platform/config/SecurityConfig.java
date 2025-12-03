@@ -43,8 +43,11 @@ public class SecurityConfig {
                                 "/api/applications/{id}",
                                 "/api/projects//industry/{industry_id}",
                                 "/api/applications/project/{id}",
-                                "/api/applications/apply"
+                                "/api/applications/apply",
+                                "/api/applications/industry"
+
                         ).permitAll()
+                        .requestMatchers("/api/applications/**").permitAll()
 
                         // TEMP: allow all project endpoints (GET/POST/PUT/DELETE) without auth
                         // so you can test from Postman and frontend easily

@@ -11,8 +11,10 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -115,6 +117,30 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     // ========================= NEW METHOD =========================
+    // Industry applications feed (for industry portal)
+    // Accepts industry PROFILE id (not user id) + optional status.
+    // ==============================================================
+    @Override
+    public Page<ApplicationSummaryDto> findIndustryApplications(UUID industryProfileId,
+                                                                ApplicationStatus status,
+                                                                Pageable pageable) {
+        if (industryProfileId == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "industry_id / industryId is required");
+        }
+
+        Page<Application> apps;
+        if (status == null) {
+            apps = appRepo.findByIndustry_ProfileId(industryProfileId, pageable);
+        } else {
+            apps = appRepo.findByIndustry_ProfileIdAndStatus(industryProfileId, status, pageable);
+        }
+
+        return apps.map(ApplicationSummaryDto::fromEntity);
+    }
+
+    // ========================= NEW METHOD =========================
     // Student/Industry applies to a project
     // - For STUDENT: enforces "only one application per project"
     // - For INDUSTRY: no uniqueness restriction (can be added later if needed)
@@ -150,7 +176,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .existsByProject_ProjectIdAndStudent_ProfileId(projectId, studentProfile.getProfileId());
 
             if (alreadyApplied) {
-                throw new IllegalStateException("You have already applied to this project.");
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        "You have already applied to this project.");
             }
 
             Application app = Application.builder()
@@ -183,7 +211,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .build();
 
             Application saved = appRepo.save(app);
-           return ApplicationSummaryDto.fromEntity(saved);
+            return ApplicationSummaryDto.fromEntity(saved);
         }
 
         // If some other userType sneaks in

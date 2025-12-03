@@ -1,6 +1,9 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.repository;
 
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Application;
+import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Application.ApplicationStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -21,4 +24,14 @@ public interface ApplicationRepository
 
     // NEW: to enforce "student can apply only once per project"
     boolean existsByProject_ProjectIdAndStudent_ProfileId(UUID projectId, UUID studentProfileId);
+
+    // ========= NEW FOR INDUSTRY APPLICATIONS PAGE =========
+
+    // paginated applications for an industry (all statuses)
+    Page<Application> findByIndustry_ProfileId(UUID profileId, Pageable pageable);
+
+    // paginated applications for an industry filtered by status
+    Page<Application> findByIndustry_ProfileIdAndStatus(UUID profileId,
+                                                        ApplicationStatus status,
+                                                        Pageable pageable);
 }

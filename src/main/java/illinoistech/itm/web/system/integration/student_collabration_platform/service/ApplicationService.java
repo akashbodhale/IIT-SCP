@@ -13,6 +13,11 @@ public interface ApplicationService {
     Page<ApplicationSummaryDto> findMyApplications(UUID studentId, ApplicationStatus status, Pageable pageable);
     List<ApplicationSummaryDto> getApplicationsByProjectId(UUID projectId);
 
+    // NEW: applications for industry portal (by industry profile id)
+    Page<ApplicationSummaryDto> findIndustryApplications(UUID industryProfileId,
+                                                         ApplicationStatus status,
+                                                         Pageable pageable);
+
     // NEW: create application (student or industry)
     ApplicationSummaryDto applyToProject(UUID userId,
                                          UUID projectId,

@@ -58,6 +58,27 @@ public class ApplicationController {
         return ResponseEntity.ok(appSvc.findMyApplications(studentId, status, pageable));
     }
 
+    // =================== NEW ENDPOINT ===================
+    /**
+     * Feed for Industry Applications page.
+     * Expects industry PROFILE id (not user id):
+     *   GET /api/applications/industry?industry_id=<uuid>&status=PENDING&page=0&size=20
+     */
+    @GetMapping("/industry")
+    public ResponseEntity<Page<ApplicationSummaryDto>> industryApplications(
+            @RequestParam(value = "industry_id", required = false) UUID industryIdSnake,
+            @RequestParam(value = "industryId",  required = false) UUID industryIdCamel,
+            @RequestParam(value = "status",      required = false) ApplicationStatus status,
+            @RequestParam(value = "page",        defaultValue = "0") int page,
+            @RequestParam(value = "size",        defaultValue = "20") int size,
+            @RequestParam(value = "sort",        defaultValue = "updatedAt,desc") String sort
+    ) {
+        logger.info("Inside {} - industryApplications method.", ApplicationController.class.getSimpleName());
+        UUID industryId = (industryIdSnake != null) ? industryIdSnake : industryIdCamel;
+        Pageable pageable = buildPageable(page, size, sort);
+        return ResponseEntity.ok(appSvc.findIndustryApplications(industryId, status, pageable));
+    }
+
     private Pageable buildPageable(int page, int size, String sort) {
         String[] parts = sort.split(",", 2);
         String field = parts[0];

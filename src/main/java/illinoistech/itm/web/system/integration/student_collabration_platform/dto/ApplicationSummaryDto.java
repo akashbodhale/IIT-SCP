@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Application;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project;
-import illinoistech.itm.web.system.integration.student_collabration_platform.repository.ProjectRepository;
+import illinoistech.itm.web.system.integration.student_collabration_platform.entity.StudentProfile;
+import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Users;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -23,7 +24,10 @@ import java.util.UUID;
         "project_id",
         "student_id",
         "title",
-        "company_name"
+        "company_name",
+        "student_name",
+        "student_email",
+        "student_major"
 })
 public record ApplicationSummaryDto(
         @JsonProperty("application_id") UUID applicationId,
@@ -37,21 +41,54 @@ public record ApplicationSummaryDto(
         @JsonProperty("project_id") UUID projectId,
         @JsonProperty("student_id") UUID studentId,
         @JsonProperty("title") String title,
-       @JsonProperty("company_name") String companyName
+        @JsonProperty("company_name") String companyName,
+        @JsonProperty("student_name") String studentName,
+        @JsonProperty("student_email") String studentEmail,
+        @JsonProperty("student_major") String studentMajor
 ) {
     public static ApplicationSummaryDto fromEntity(Application a) {
-        String CompanyName =" " ;
+
+        // ---- Project info ----
         Project p = a.getProject();
-        var Title =p.getTitle();
-        if (a.getIndustry()!= null) {
-             CompanyName = a.getIndustry().getCompanyName();
+        UUID projId = (p != null) ? p.getProjectId() : null;
+        String title = (p != null) ? p.getTitle() : null;
+
+        // ---- Student info ----
+        StudentProfile student = a.getStudent();
+        UUID studId = (student != null) ? student.getProfileId() : null;
+
+        Users user = (student != null) ? student.getUser() : null;
+
+        String studentName = null;
+        String studentEmail = null;
+        String studentMajor = null;
+
+        if (user != null) {
+            String firstName = user.getFirstName();
+            String lastName = user.getLastName();
+
+            if (firstName != null || lastName != null) {
+                StringBuilder sb = new StringBuilder();
+                if (firstName != null) sb.append(firstName);
+                if (lastName != null) {
+                    if (!sb.isEmpty()) sb.append(" ");
+                    sb.append(lastName);
+                }
+                studentName = sb.toString();
+            }
+
+            studentEmail = user.getEmail();
         }
 
-        UUID projId = (p != null) ? p.getProjectId() : null;
+        if (student != null) {
+            studentMajor = student.getMajor();
+        }
 
-        UUID studId = (a.getStudent() != null)
-                ? a.getStudent().getProfileId()   // <-- adjust if your PK field name differs
-                : null;
+        // ---- Company info ----
+        String companyName = null;
+        if (a.getIndustry() != null) {
+            companyName = a.getIndustry().getCompanyName();
+        }
 
         return new ApplicationSummaryDto(
                 a.getApplicationId(),
@@ -64,8 +101,11 @@ public record ApplicationSummaryDto(
                 a.getUpdatedAt(),
                 projId,
                 studId,
-                Title,
-                CompanyName
+                title,
+                companyName,
+                studentName,
+                studentEmail,
+                studentMajor
         );
     }
 }
