@@ -74,7 +74,7 @@ public class ApplicationController {
      * For student users, this enforces:
      *   "Student can apply only once for every project."
      */
-    @PostMapping
+    @PostMapping ("/apply")
     public ResponseEntity<ApplicationSummaryDto> applyToProject(
             @RequestBody CreateApplicationRequest request
     ) {

@@ -40,9 +40,12 @@ public record ApplicationSummaryDto(
        @JsonProperty("company_name") String companyName
 ) {
     public static ApplicationSummaryDto fromEntity(Application a) {
+        String CompanyName =" " ;
         Project p = a.getProject();
         var Title =p.getTitle();
-        var CompanyName = a.getIndustry().getCompanyName();
+        if (a.getIndustry()!= null) {
+             CompanyName = a.getIndustry().getCompanyName();
+        }
 
         UUID projId = (p != null) ? p.getProjectId() : null;
 

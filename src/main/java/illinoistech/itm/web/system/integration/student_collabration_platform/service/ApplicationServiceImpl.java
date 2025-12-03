@@ -183,7 +183,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .build();
 
             Application saved = appRepo.save(app);
-            return ApplicationSummaryDto.fromEntity(saved);
+           return ApplicationSummaryDto.fromEntity(saved);
         }
 
         // If some other userType sneaks in
