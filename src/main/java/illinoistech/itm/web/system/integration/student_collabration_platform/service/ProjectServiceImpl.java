@@ -184,5 +184,16 @@ public class ProjectServiceImpl implements ProjectService {
         );
     }
 
+    @Override
+    public long countOpenForStudent(UUID userId) {
+        return repo.countOpenProjectsForUser(userId);
+    }
+
+    @Override
+    public long countAllForStudentwithoutstatus(UUID userId) {
+        return repo.countProjectsForUserWithoutStatus(userId);
+    }
+
+
 }
 

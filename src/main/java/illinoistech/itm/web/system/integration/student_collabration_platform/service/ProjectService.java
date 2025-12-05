@@ -28,4 +28,7 @@ public interface ProjectService {
 
     ProjectSummaryDto update(UUID id, ProjectUpdateRequest req);
     List<ProjectSummaryDto> getAllByIndustry(UUID industryId);
+
+    long countOpenForStudent(UUID userId);
+    long countAllForStudentwithoutstatus(UUID userId);
 }

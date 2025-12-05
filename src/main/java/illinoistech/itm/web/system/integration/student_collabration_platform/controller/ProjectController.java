@@ -8,6 +8,7 @@ import illinoistech.itm.web.system.integration.student_collabration_platform.ser
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -78,6 +79,24 @@ public class ProjectController {
         ProjectSummaryDto updated = projectSvc.update(id, request);
         return ResponseEntity.ok(updated);
     }
+
+    @GetMapping("/students/{userId}/open")
+    public ResponseEntity<Map<String, Long>> countOpenForStudent(@PathVariable UUID userId) {
+        log.info("Inside {} - countOpenForStudent method.", ProjectController.class.getSimpleName());
+
+        long countOpen = projectSvc.countOpenForStudent(userId);
+        long count = projectSvc.countAllForStudentwithoutstatus(userId);
+
+        Map<String, Long> body = Map.of(
+                "ActiveProject", countOpen,
+                "totalAppliedProject", count
+        );
+
+        return ResponseEntity.ok(body);
+    }
+
+
+
 
     @GetMapping
     public ResponseEntity<Page<ProjectSummaryDto>> search(
