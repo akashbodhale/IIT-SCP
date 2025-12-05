@@ -45,25 +45,26 @@ public class SecurityConfig {
                                 "/api/applications/project/{id}",
                                 "/api/applications/apply",
                                 "/api/applications/industry"
-
                         ).permitAll()
-                        .requestMatchers("/api/applications/**").permitAll()
 
-                        // TEMP: allow all project endpoints (GET/POST/PUT/DELETE) without auth
-                        // so you can test from Postman and frontend easily
+                        // Public applications & projects (for now)
+                        .requestMatchers("/api/applications/**").permitAll()
                         .requestMatchers("/api/projects/**").permitAll()
 
-                        // Any other /api/auth/** endpoints require authentication
-                        .requestMatchers("/api/auth/**").authenticated()
+                        // ⬇️ Student profile endpoints: make them PUBLIC for testing
+                        .requestMatchers("/api/student-profiles/**").permitAll()
 
-                        // Everything else requires authentication
+                        // If you have other /api/auth/** that should be protected, add:
+                        // .requestMatchers("/api/auth/**").authenticated()
+
+                        // Everything else (not matched above) requires authentication
                         .anyRequest().authenticated()
                 )
 
-                // Allow anonymous access for the permitAll() endpoints
+                // Allow anonymous for permitAll() endpoints
                 .anonymous(Customizer.withDefaults())
 
-                // Use HTTP Basic auth for protected endpoints (good enough for testing)
+                // Use HTTP Basic for authenticated endpoints (OK for dev)
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
@@ -93,7 +94,7 @@ public class SecurityConfig {
                 "X-Requested-With"
         ));
 
-        // Headers exposed to the browser (frontend can read these)
+        // Headers exposed to the browser
         cfg.setExposedHeaders(List.of("Location"));
 
         // Allow credentials (cookies/auth headers) from allowed origins
