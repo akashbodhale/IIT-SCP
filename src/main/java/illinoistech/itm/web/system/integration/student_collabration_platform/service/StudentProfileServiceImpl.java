@@ -30,7 +30,7 @@ public class StudentProfileServiceImpl implements StudentProfileService {
         Users user = getUserOrThrow(userId);
         StudentProfile profile = studentProfileRepository
                 .findByUser_UserId(userId)
-                .orElse(null);
+                .orElse(null); // may be null first time
 
         return toDto(user, profile);
     }
@@ -48,8 +48,7 @@ public class StudentProfileServiceImpl implements StudentProfileService {
         StudentProfile profile = new StudentProfile();
         profile.setUser(user);
         profile.setUniversity(request.getUniversity());
-        // auto-generate studentId
-        profile.setstudentId(generateStudentId(user));
+        profile.setstudentId(request.getStudentId()); // matches your entity's method name
         profile.setMajor(request.getMajor());
         profile.setAcademicYear(request.getAcademicYear());
         profile.setExpectedGraduation(request.getExpectedGraduation());
@@ -73,7 +72,7 @@ public class StudentProfileServiceImpl implements StudentProfileService {
                 .orElseThrow(() -> new EntityNotFoundException("Student profile not found for user " + userId));
 
         profile.setUniversity(request.getUniversity());
-        // IMPORTANT: do NOT change studentId on update
+        profile.setstudentId(request.getStudentId());
         profile.setMajor(request.getMajor());
         profile.setAcademicYear(request.getAcademicYear());
         profile.setExpectedGraduation(request.getExpectedGraduation());
@@ -86,8 +85,6 @@ public class StudentProfileServiceImpl implements StudentProfileService {
         return toDto(user, saved);
     }
 
-    // ---------- helpers ----------
-
     private Users getUserOrThrow(UUID userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + userId));
@@ -99,22 +96,16 @@ public class StudentProfileServiceImpl implements StudentProfileService {
         }
     }
 
-    // auto-generate a studentId string (you can tweak the pattern if you want)
-    private String generateStudentId(Users user) {
-        // Example: STD-3C4F9A2B
-        String shortUuid = UUID.randomUUID().toString().replace("-", "").substring(0, 8).toUpperCase();
-        return "STD-" + shortUuid;
-    }
-
     private StudentProfileDto toDto(Users user, StudentProfile profile) {
         StudentProfileDto dto = new StudentProfileDto();
 
-        // user info (read-only)
+        // always return user info
         dto.setUserId(user.getUserId());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setEmail(user.getEmail());
 
+        // profile may be null (first time)
         if (profile != null) {
             dto.setProfileId(profile.getProfileId());
             dto.setUniversity(profile.getUniversity());
