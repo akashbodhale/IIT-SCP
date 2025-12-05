@@ -7,6 +7,7 @@ import java.time.LocalDate;
 public class StudentProfileRequest {
 
     private String university;
+    private String studentId;
     private String major;
     private StudentProfile.AcademicYear academicYear;
     private LocalDate expectedGraduation;
@@ -19,6 +20,9 @@ public class StudentProfileRequest {
 
     public String getUniversity() { return university; }
     public void setUniversity(String university) { this.university = university; }
+
+    public String getStudentId() { return studentId; }
+    public void setStudentId(String studentId) { this.studentId = studentId; }
 
     public String getMajor() { return major; }
     public void setMajor(String major) { this.major = major; }
