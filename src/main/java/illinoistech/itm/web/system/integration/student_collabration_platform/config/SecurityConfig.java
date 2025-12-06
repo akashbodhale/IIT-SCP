@@ -77,14 +77,14 @@ public class SecurityConfig {
         CorsConfiguration cfg = new CorsConfiguration();
 
         // Allowed origins - adjust when you add more environments
-//        cfg.setAllowedOrigins(List.of(
-//                "http://localhost:8080",   // if backend serves something
-//                "http://localhost:5173",   // Vite dev server
-//                "https://dj3eozung04ja.cloudfront.net", // your CloudFront React app
-//                "https://api.iit-scp.click"             // production API domain
-//        ));
+        cfg.setAllowedOrigins(List.of(
+                "http://localhost:8080",   // if backend serves something
+                "http://localhost:5173",   // Vite dev server
+                "https://dj3eozung04ja.cloudfront.net", // your CloudFront React app
+                "https://api.iit-scp.click"             // production API domain
+        ));
 
-        cfg.setAllowedOriginPatterns(List.of("*"));
+//        cfg.setAllowedOriginPatterns(List.of("*"));
 
         // Allowed HTTP methods
         cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
@@ -103,7 +103,7 @@ public class SecurityConfig {
 
         // Allow credentials (cookies/auth headers) from allowed origins
 //        cfg.setAllowCredentials(true);
-        cfg.setAllowCredentials(false);
+        cfg.setAllowCredentials(true);
         // Cache preflight response for 1 hour
         cfg.setMaxAge(3600L);
 
