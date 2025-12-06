@@ -2,7 +2,7 @@ package illinoistech.itm.web.system.integration.student_collabration_platform.dt
 
 import java.util.UUID;
 
-public record SignUpResponse(UUID id, String email, String firstName, String lastName)
+public record SignUpResponse(UUID userId, String email, String firstName, String lastName)
 {
 
 }

@@ -13,6 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.UUID;
+
 
 @Slf4j
 @Service
@@ -45,10 +48,31 @@ public class AuthService {
         user.setLastName(req.getLastName().trim());
         user.setUserType(req.getUserType().trim());
 //      user.getRoles().add("USER");
-
         Users saved = repo.save(user);
 
-        return new SignUpResponse(saved.getId(), saved.getEmail(), saved.getFirstName(), saved.getLastName());
+        if (saved.getUserType().equalsIgnoreCase("Student")) {
+
+            StudentProfile profile = new StudentProfile();
+            profile.setUser(saved);
+            profile.setUniversity(req.getUniversity());
+            profile.setstudentId(req.getStudentId());
+            profile.setMajor(req.getMajor());
+
+            // Convert String → Enum (FRESHMAN, SOPHOMORE, JUNIOR...)
+            profile.setAcademicYear(
+                    StudentProfile.AcademicYear.valueOf(req.getAcademicYear().toUpperCase())
+            );
+
+            // Convert String → LocalDate
+            if (req.getExpectedGraduation() != null) {
+                profile.setExpectedGraduation(LocalDate.parse(req.getExpectedGraduation()));
+            }
+
+            stdrepo.save(profile);
+        }
+
+
+        return new SignUpResponse(saved.getUserId(), saved.getEmail(), saved.getFirstName(), saved.getLastName());
     }
 
     @Transactional(readOnly = true)
@@ -56,7 +80,7 @@ public class AuthService {
     {
         var user = repo.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
-        String major = stdrepo.findByUser_UserId(user.getId())
+        String major = stdrepo.findByUser_UserId(user.getUserId())
                 .map(StudentProfile::getMajor)
                 .orElse(null);
 

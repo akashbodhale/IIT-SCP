@@ -38,7 +38,7 @@ public class AuthController {
     {
         log.info("Inside {} - Signup method.", AuthController.class.getSimpleName());
         SignUpResponse created = userService.register(request);
-        var location = uriBuilder.path("/api/users/{id}").build(created.id());
+        var location = uriBuilder.path("/api/users/{id}").build(created.userId());
         return ResponseEntity.created(location).body(created);
     }
 

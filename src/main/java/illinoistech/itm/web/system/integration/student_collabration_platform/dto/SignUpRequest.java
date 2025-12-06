@@ -31,6 +31,17 @@ public class SignUpRequest {
     @Pattern(regexp = "^[0-9+\\-()\\s]*$", message = "Phone may contain digits, spaces, +, -, ( )")
     private String phone;
 
+
+
+    // --- Student Profile fields (only for Student users) ---
+    private String university;
+    private String studentId;
+    private String major;
+    private String academicYear;      // String → will convert to enum
+    private String expectedGraduation; // LocalDate as text "2026-12-15"
+
+
+
     // --- getters & setters ---
 
     public String getEmail() {
@@ -74,4 +85,21 @@ public class SignUpRequest {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
+
+    public String getUniversity() { return university; }
+    public void setUniversity(String university) { this.university = university; }
+
+    public String getStudentId() { return studentId; }
+    public void setStudentId(String studentId) { this.studentId = studentId; }
+
+    public String getMajor() { return major; }
+    public void setMajor(String major) { this.major = major; }
+
+    public String getAcademicYear() { return academicYear; }
+    public void setAcademicYear(String academicYear) { this.academicYear = academicYear; }
+
+    public String getExpectedGraduation() { return expectedGraduation; }
+    public void setExpectedGraduation(String expectedGraduation) { this.expectedGraduation = expectedGraduation; }
+
 }
