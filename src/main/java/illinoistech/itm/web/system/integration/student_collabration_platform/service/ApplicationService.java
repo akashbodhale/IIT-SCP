@@ -1,6 +1,7 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.service;
 
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ApplicationSummaryDto;
+import illinoistech.itm.web.system.integration.student_collabration_platform.dto.MyApplicationDto;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Application.ApplicationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,4 +24,6 @@ public interface ApplicationService {
                                          UUID projectId,
                                          String coverLetterUrl,
                                          String portfolioLink);
+
+    List<MyApplicationDto> getMyApplications(UUID studentUserId);
 }

@@ -1,11 +1,13 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.repository;
 
+import illinoistech.itm.web.system.integration.student_collabration_platform.dto.MyApplicationDto;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Application;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Application.ApplicationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,4 +36,20 @@ public interface ApplicationRepository
     Page<Application> findByIndustry_ProfileIdAndStatus(UUID profileId,
                                                         ApplicationStatus status,
                                                         Pageable pageable);
+
+    @Query("""
+    SELECT new illinoistech.itm.web.system.integration.student_collabration_platform.dto.MyApplicationDto(
+        p.title,
+        ip.companyName,
+        a.appliedAt,
+        a.status
+    )
+    FROM Application a
+    JOIN a.project p
+    JOIN IndustryProfile ip ON ip.user.userId = p.owner.userId
+    WHERE a.student.user.userId = :studentUserId
+    ORDER BY a.appliedAt DESC
+""")
+    List<MyApplicationDto> findMyApplications(UUID studentUserId);
+
 }

@@ -46,7 +46,8 @@ public class SecurityConfig {
                                 "/api/projects//industry/{industry_id}",
                                 "/api/applications/project/{id}",
                                 "/api/applications/apply",
-                                "/api/applications/industry"
+                                "/api/applications/industry",
+                                "/api/student/**"
                         ).permitAll()
 
                         // Public applications & projects (for now)

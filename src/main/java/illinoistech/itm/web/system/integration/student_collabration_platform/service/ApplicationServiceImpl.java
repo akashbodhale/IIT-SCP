@@ -1,6 +1,7 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.service;
 
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ApplicationSummaryDto;
+import illinoistech.itm.web.system.integration.student_collabration_platform.dto.MyApplicationDto;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Application;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Application.ApplicationStatus;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.IndustryProfile;
@@ -181,13 +182,12 @@ public class ApplicationServiceImpl implements ApplicationService {
                         "You have already applied to this project.");
             }
 
-            Application app = Application.builder()
-                    .project(project)
-                    .student(studentProfile)
-                    .coverLetterUrl(coverLetterUrl)
-                    .portfolioLink(portfolioLink)
-                    .status(ApplicationStatus.PENDING)
-                    .build();
+            Application app = new Application();
+            app.setProject(project);
+            app.setStudent(studentProfile);
+            app.setCoverLetterUrl(coverLetterUrl);
+            app.setPortfolioLink(portfolioLink);
+            app.setStatus(ApplicationStatus.PENDING);
 
             Application saved = appRepo.save(app);
             return ApplicationSummaryDto.fromEntity(saved);
@@ -202,13 +202,12 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .orElseThrow(() -> new EntityNotFoundException(
                             "Industry profile not found for user: " + userId));
 
-            Application app = Application.builder()
-                    .project(project)
-                    .industry(industryProfile)
-                    .coverLetterUrl(coverLetterUrl)
-                    .portfolioLink(portfolioLink)
-                    .status(ApplicationStatus.PENDING)
-                    .build();
+            Application app = new Application();
+            app.setProject(project);
+            app.setIndustry(industryProfile);
+            app.setCoverLetterUrl(coverLetterUrl);
+            app.setPortfolioLink(portfolioLink);
+            app.setStatus(ApplicationStatus.PENDING);
 
             Application saved = appRepo.save(app);
             return ApplicationSummaryDto.fromEntity(saved);
@@ -216,5 +215,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         // If some other userType sneaks in
         throw new IllegalStateException("Unsupported user type for applications: " + userType);
+    }
+
+    public List<MyApplicationDto> getMyApplications(UUID studentUserId) {
+        return appRepo.findMyApplications(studentUserId);
     }
 }
