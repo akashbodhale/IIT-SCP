@@ -8,7 +8,11 @@ import illinoistech.itm.web.system.integration.student_collabration_platform.ent
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.IndustryProfile;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.StudentProfile;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Users;
-import illinoistech.itm.web.system.integration.student_collabration_platform.repository.*;
+import illinoistech.itm.web.system.integration.student_collabration_platform.repository.ApplicationRepository;
+import illinoistech.itm.web.system.integration.student_collabration_platform.repository.IndustryProfileRepository;
+import illinoistech.itm.web.system.integration.student_collabration_platform.repository.ProjectRepository;
+import illinoistech.itm.web.system.integration.student_collabration_platform.repository.StudentProfileRepository;
+import illinoistech.itm.web.system.integration.student_collabration_platform.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -202,12 +206,19 @@ public class ApplicationServiceImpl implements ApplicationService {
                         "You have already applied to this project.");
             }
 
+            // NEW: denormalize industry user id (project owner)
+            UUID industryUserId = null;
+            if (project.getOwner() != null) {
+                industryUserId = project.getOwner().getUserId();
+            }
+
             Application app = new Application();
             app.setProject(project);
             app.setStudent(studentProfile);
             app.setCoverLetterUrl(coverLetterUrl);
             app.setPortfolioLink(portfolioLink);
             app.setStatus(ApplicationStatus.PENDING);
+            app.setIndustryUserId(industryUserId); // NEW
 
             Application saved = appRepo.save(app);
             return ApplicationSummaryDto.fromEntity(saved);
