@@ -11,12 +11,12 @@ import illinoistech.itm.web.system.integration.student_collabration_platform.rep
 import illinoistech.itm.web.system.integration.student_collabration_platform.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.Random;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +63,9 @@ public class ProjectServiceImpl implements ProjectService {
             String company = (ownerId != null)
                     ? industryProfileRepo.findCompanyNameByUserId(ownerId).orElse(null)
                     : null;
+            UUID profileId= (ownerId != null) ? industryProfileRepo.findProfileIdByOwnerId(ownerId).orElse(null) : null;
+            log.info("UUID :",profileId);
+            result.add(ProjectSummaryDto.fromEntity(p, company, profileId));
             result.add(ProjectSummaryDto.fromEntity(p, company));
         }
         return result;
@@ -81,7 +84,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         List<ProjectSummaryDto> result = new ArrayList<>(projects.size());
         for (Project p : projects) {
-            result.add(ProjectSummaryDto.fromEntity(p, company));
+            result.add(ProjectSummaryDto.fromEntity(p, company, null)));
         }
         return result;
     }
@@ -112,7 +115,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         var saved = repo.save(proj);
         log.info("created project: {}", saved);
-        return ProjectSummaryDto.fromEntity(saved,"");
+        return ProjectSummaryDto.fromEntity(saved,"",null);
     }
 
     @Override
@@ -156,7 +159,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         Project saved = repo.save(entity);
         log.info("updated project: {}", saved.getDeadline());
-        return ProjectSummaryDto.fromEntity(saved,"");
+        return ProjectSummaryDto.fromEntity(saved,"",null);
     }
 
     private ProjectSummaryDto toDto(Project p) {
@@ -180,7 +183,8 @@ public class ProjectServiceImpl implements ProjectService {
                 p.getUpdatedAt(),
                 p.getPublishedAt(),
                 p.getProjectObjective(),
-                ""
+                "",
+                null
         );
     }
 
