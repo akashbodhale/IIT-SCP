@@ -3,9 +3,11 @@ package illinoistech.itm.web.system.integration.student_collabration_platform.se
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.SignInResponse;
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.SignUpResponse;
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.SignUpRequest;
+import illinoistech.itm.web.system.integration.student_collabration_platform.entity.IndustryProfile;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.StudentProfile;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Users;
 import illinoistech.itm.web.system.integration.student_collabration_platform.exception.EmailAlreadyUsedException;
+import illinoistech.itm.web.system.integration.student_collabration_platform.repository.IndustryProfileRepository;
 import illinoistech.itm.web.system.integration.student_collabration_platform.repository.StudentProfileRepository;
 import illinoistech.itm.web.system.integration.student_collabration_platform.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +26,14 @@ public class AuthService {
 
     private final UserRepository repo;
     private final StudentProfileRepository stdrepo;
+    private final IndustryProfileRepository indrepo;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository repo, PasswordEncoder passwordEncoder,StudentProfileRepository stdrepo) {
+    public AuthService(UserRepository repo, PasswordEncoder passwordEncoder, StudentProfileRepository stdrepo, IndustryProfileRepository indrepo) {
         this.repo = repo;
         this.passwordEncoder = passwordEncoder;
         this.stdrepo = stdrepo;
+        this.indrepo = indrepo;
     }
 
 
@@ -69,6 +73,13 @@ public class AuthService {
             }
 
             stdrepo.save(profile);
+        }
+
+        if (saved.getUserType().equalsIgnoreCase("Industry"))
+        {
+            IndustryProfile profile = new IndustryProfile();
+            profile.setUser(saved);
+            indrepo.save(profile);
         }
 
 
