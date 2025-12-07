@@ -66,7 +66,6 @@ public class ProjectServiceImpl implements ProjectService {
             UUID profileId= (ownerId != null) ? industryProfileRepo.findProfileIdByOwnerId(ownerId).orElse(null) : null;
             log.info("UUID :",profileId);
             result.add(ProjectSummaryDto.fromEntity(p, company, profileId));
-            result.add(ProjectSummaryDto.fromEntity(p, company));
         }
         return result;
     }
@@ -84,7 +83,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         List<ProjectSummaryDto> result = new ArrayList<>(projects.size());
         for (Project p : projects) {
-            result.add(ProjectSummaryDto.fromEntity(p, company, null)));
+            result.add(ProjectSummaryDto.fromEntity(p, company, null));
         }
         return result;
     }
