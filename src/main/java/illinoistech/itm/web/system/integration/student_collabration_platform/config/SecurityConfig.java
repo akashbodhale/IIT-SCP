@@ -62,6 +62,8 @@ public class SecurityConfig {
 
                         //Industry profile endpoint:
                         .requestMatchers(HttpMethod.GET, "/api/industry-profiles/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/industry-profiles/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/industry-profiles/**").permitAll()
 
                         // If you have other /api/auth/** that should be protected, add:
                         // .requestMatchers("/api/auth/**").authenticated()

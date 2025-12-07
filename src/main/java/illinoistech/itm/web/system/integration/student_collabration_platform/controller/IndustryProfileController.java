@@ -4,10 +4,7 @@ import illinoistech.itm.web.system.integration.student_collabration_platform.dto
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.StudentProfileDto;
 import illinoistech.itm.web.system.integration.student_collabration_platform.service.IndustryProfileService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -23,6 +20,13 @@ public class IndustryProfileController {
     @GetMapping("/{userId}")
     public ResponseEntity<IndustryProfileDto> getProfile(@PathVariable("userId") UUID userId) {
         IndustryProfileDto dto = industryProfileService.getProfileForUser(userId);
+        return ResponseEntity.ok(dto);
+    }
+
+    @PutMapping("/edit/{userId}")
+    public ResponseEntity<IndustryProfileDto> editProfile(@PathVariable("userId") UUID userId, @RequestBody IndustryProfileDto profile)
+    {
+        IndustryProfileDto dto = industryProfileService.editProfileForUser(userId, profile);
         return ResponseEntity.ok(dto);
     }
 }
