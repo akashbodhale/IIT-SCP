@@ -48,6 +48,7 @@ public class SecurityConfig {
                                 "/api/applications/apply",
                                 "/api/applications/industry",
                                 "/api/student/**"
+
                         ).permitAll()
 
                         // Public applications & projects (for now)
@@ -58,6 +59,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/student-profiles/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/student-profiles/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/student-profiles/**").permitAll()
+
+                        //Industry profile endpoint:
+                        .requestMatchers(HttpMethod.GET, "/api/industry-profiles/**").permitAll()
 
                         // If you have other /api/auth/** that should be protected, add:
                         // .requestMatchers("/api/auth/**").authenticated()
