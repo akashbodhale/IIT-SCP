@@ -41,8 +41,28 @@ public class SignUpRequest {
     private String expectedGraduation; // LocalDate as text "2026-12-15"
 
 
+    private String companyName;
+    private String position;
+
 
     // --- getters & setters ---
+
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
 
     public String getEmail() {
         return email;

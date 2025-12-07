@@ -79,8 +79,8 @@ public class AuthService {
         {
             IndustryProfile profile = new IndustryProfile();
             profile.setUser(saved);
-            profile.setCompanyName("IIT");
-            profile.setPosition("HEAD");
+            profile.setCompanyName(req.getCompanyName());
+            profile.setPosition(req.getPosition());
 
             indrepo.save(profile);
             log.info("Industry profile has been saved successfully.",indrepo);
