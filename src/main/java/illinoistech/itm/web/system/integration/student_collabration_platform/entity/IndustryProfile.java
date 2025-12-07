@@ -63,7 +63,7 @@ public class IndustryProfile {
     public enum companySize { SMALL, MEDIUM, LARGE, STARTUP, ENTERPRISE }
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "company_size", nullable = false, length = 32)
+    @Column(name = "company_size", nullable = true, length = 32)
     private companySize companySize;
 
     // long form text -> use TEXT
