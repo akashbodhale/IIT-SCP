@@ -11,6 +11,10 @@ import java.util.UUID;
 
 public interface IndustryProfileRepository extends JpaRepository<IndustryProfile, UUID> {
     Optional<IndustryProfile> findByUser_UserId(UUID userId);
+    
     @Query("select ip.companyName from IndustryProfile ip where ip.user.userId = :userId")
     Optional<String> findCompanyNameByUserId(@Param("userId") UUID userId);
+
+    @Query("select ip.profileId from IndustryProfile ip where ip.user.userId = :userId")
+    Optional<UUID> findProfileIdByOwnerId(@Param("userId") UUID userId);
 }
