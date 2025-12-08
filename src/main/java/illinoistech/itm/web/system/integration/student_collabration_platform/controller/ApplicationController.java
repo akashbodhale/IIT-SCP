@@ -2,6 +2,7 @@ package illinoistech.itm.web.system.integration.student_collabration_platform.co
 
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ApplicationSummaryDto;
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.CreateApplicationRequest;
+import illinoistech.itm.web.system.integration.student_collabration_platform.dto.IndustryApplicationDto;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Application.ApplicationStatus;
 import illinoistech.itm.web.system.integration.student_collabration_platform.service.ApplicationService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +28,6 @@ public class ApplicationController {
         this.appSvc = appSvc;
     }
 
-    // =================== EXISTING ENDPOINTS ===================
-
     @GetMapping("/{id}")
     public ResponseEntity<List<ApplicationSummaryDto>> getOne(@PathVariable("id") UUID id) {
         logger.info("Inside {} - getOne method.", ApplicationController.class.getSimpleName());
@@ -38,11 +37,10 @@ public class ApplicationController {
     @GetMapping("/project/{id}")
     public ResponseEntity<List<ApplicationSummaryDto>> getApplicationByProjectId(@PathVariable("id") UUID id) {
         logger.info("Inside {} - getApplicationByProjectId method.", ApplicationController.class.getSimpleName());
-
         return ResponseEntity.ok(appSvc.getApplicationsByProjectId(id));
     }
 
-    /** Feed for “My Applications” page with snake_case response keys */
+    /** Feed for “My Applications” (student) */
     @GetMapping
     public ResponseEntity<Page<ApplicationSummaryDto>> myApplications(
             @RequestParam(value = "student_id", required = false) UUID studentIdSnake,
@@ -58,12 +56,7 @@ public class ApplicationController {
         return ResponseEntity.ok(appSvc.findMyApplications(studentId, status, pageable));
     }
 
-    // =================== NEW ENDPOINT ===================
-    /**
-     * Feed for Industry Applications page.
-     * Expects industry PROFILE id (not user id):
-     *   GET /api/applications/industry?industry_id=<uuid>&status=PENDING&page=0&size=20
-     */
+    /** Industry applications (when industry is APPLICANT, by profile id) */
     @GetMapping("/industry")
     public ResponseEntity<Page<ApplicationSummaryDto>> industryApplications(
             @RequestParam(value = "industry_id", required = false) UUID industryIdSnake,
@@ -79,6 +72,38 @@ public class ApplicationController {
         return ResponseEntity.ok(appSvc.findIndustryApplications(industryId, status, pageable));
     }
 
+    // ========= NEW: INDUSTRY VIEW OF STUDENT APPLICATIONS =========
+    /**
+     * Student applications to projects owned by an INDUSTRY USER.
+     *
+     * Example:
+     *   GET /api/applications/industry/project-applications
+     *       ?industry_user_id=<user-uuid>
+     *       &status=PENDING
+     *       &page=0
+     *       &size=20
+     */
+    @GetMapping("/industry/project-applications")
+    public ResponseEntity<List<IndustryApplicationDto>> industryProjectApplicationsByUser(
+            @RequestParam(value = "industry_user_id", required = false) UUID industryUserIdSnake,
+            @RequestParam(value = "industryUserId",   required = false) UUID industryUserIdCamel,
+            @RequestParam(value = "status",           required = false) ApplicationStatus status,
+            @RequestParam(value = "page",             defaultValue = "0") int page,
+            @RequestParam(value = "size",             defaultValue = "20") int size,
+            @RequestParam(value = "sort",             defaultValue = "appliedAt,desc") String sort
+    ) {
+        logger.info("Inside {} - industryProjectApplicationsByUser method.", ApplicationController.class.getSimpleName());
+
+        UUID industryUserId = (industryUserIdSnake != null) ? industryUserIdSnake : industryUserIdCamel;
+        Pageable pageable = buildPageable(page, size, sort);
+
+        Page<IndustryApplicationDto> pageResult =
+                appSvc.findIndustryProjectApplicationsByUser(industryUserId, status, pageable);
+
+        // return ONLY the list:
+        return ResponseEntity.ok(pageResult.getContent());
+    }
+
     private Pageable buildPageable(int page, int size, String sort) {
         String[] parts = sort.split(",", 2);
         String field = parts[0];
@@ -87,14 +112,6 @@ public class ApplicationController {
         return PageRequest.of(page, size, Sort.by(dir, field));
     }
 
-    // =================== NEW ENDPOINT ===================
-
-    /**
-     * Create a new application (student or industry user).
-     *
-     * For student users, this enforces:
-     *   "Student can apply only once for every project."
-     */
     @PostMapping ("/apply")
     public ResponseEntity<ApplicationSummaryDto> applyToProject(
             @RequestBody CreateApplicationRequest request

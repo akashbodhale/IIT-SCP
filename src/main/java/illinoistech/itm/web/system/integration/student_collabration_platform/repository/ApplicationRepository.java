@@ -1,5 +1,6 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.repository;
 
+import illinoistech.itm.web.system.integration.student_collabration_platform.dto.IndustryApplicationDto;
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.MyApplicationDto;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Application;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Application.ApplicationStatus;
@@ -29,27 +30,96 @@ public interface ApplicationRepository
 
     // ========= NEW FOR INDUSTRY APPLICATIONS PAGE =========
 
-    // paginated applications for an industry (all statuses)
+    // paginated applications for an industry (all statuses) – when industry is APPLICANT
     Page<Application> findByIndustry_ProfileId(UUID profileId, Pageable pageable);
 
-    // paginated applications for an industry filtered by status
+    // paginated applications for an industry filtered by status – when industry is APPLICANT
     Page<Application> findByIndustry_ProfileIdAndStatus(UUID profileId,
                                                         ApplicationStatus status,
                                                         Pageable pageable);
 
     @Query("""
-    SELECT new illinoistech.itm.web.system.integration.student_collabration_platform.dto.MyApplicationDto(
-        p.title,
-        ip.companyName,
-        a.appliedAt,
-        a.status
-    )
-    FROM Application a
-    JOIN a.project p
-    JOIN IndustryProfile ip ON ip.user.userId = p.owner.userId
-    WHERE a.student.user.userId = :studentUserId
-    ORDER BY a.appliedAt DESC
-""")
+        SELECT new illinoistech.itm.web.system.integration.student_collabration_platform.dto.MyApplicationDto(
+            p.title,
+            ip.companyName,
+            a.appliedAt,
+            a.status
+        )
+        FROM Application a
+        JOIN a.project p
+        JOIN IndustryProfile ip ON ip.user.userId = p.owner.userId
+        WHERE a.student.user.userId = :studentUserId
+        ORDER BY a.appliedAt DESC
+        """)
     List<MyApplicationDto> findMyApplications(UUID studentUserId);
 
+    // ========= NEW: INDUSTRY VIEW – STUDENT APPS TO THEIR PROJECTS =========
+
+    /**
+     * All student applications to projects owned by a given INDUSTRY USER (no status filter).
+     */
+    @Query("""
+        SELECT new illinoistech.itm.web.system.integration.student_collabration_platform.dto.IndustryApplicationDto(
+            a.applicationId,
+            p.projectId,
+            p.title,
+            p.skills,
+            sp.profileId,
+            stuUser.userId,
+            stuUser.firstName,
+            stuUser.lastName,
+            stuUser.email,
+            sp.university,
+            sp.studentId,
+            sp.major,
+            sp.academicYear,
+            a.appliedAt,
+            a.status,
+            a.coverLetterUrl,
+            a.portfolioLink
+        )
+        FROM Application a
+        JOIN a.project p
+        JOIN p.owner su
+        JOIN a.student sp
+        JOIN sp.user stuUser
+        WHERE su.userId = :industryUserId
+        """)
+    Page<IndustryApplicationDto> findIndustryProjectApplications(UUID industryUserId,
+                                                                 Pageable pageable);
+
+    /**
+     * Same as above, but filtered by Application.status.
+     */
+    @Query("""
+        SELECT new illinoistech.itm.web.system.integration.student_collabration_platform.dto.IndustryApplicationDto(
+            a.applicationId,
+            p.projectId,
+            p.title,
+            p.skills,
+            sp.profileId,
+            stuUser.userId,
+            stuUser.firstName,
+            stuUser.lastName,
+            stuUser.email,
+            sp.university,
+            sp.studentId,
+            sp.major,
+            sp.academicYear,
+            a.appliedAt,
+            a.status,
+            a.coverLetterUrl,
+            a.portfolioLink
+        )
+        FROM Application a
+        JOIN a.project p
+        JOIN p.owner su
+        JOIN a.student sp
+        JOIN sp.user stuUser
+        WHERE su.userId = :industryUserId
+          AND a.status = :status
+        """)
+    Page<IndustryApplicationDto> findIndustryProjectApplications(UUID industryUserId,
+                                                                 ApplicationStatus status,
+                                                                 Pageable pageable);
 }
