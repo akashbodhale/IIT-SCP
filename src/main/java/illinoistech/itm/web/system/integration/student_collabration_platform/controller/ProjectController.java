@@ -1,8 +1,10 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.controller;
+import illinoistech.itm.web.system.integration.student_collabration_platform.dto.MyApplicationDto;
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ProjectSummaryDto;
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ProjectUpdateRequest;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project;
 import illinoistech.itm.web.system.integration.student_collabration_platform.entity.Project.ProjectStatus;
+import illinoistech.itm.web.system.integration.student_collabration_platform.service.ApplicationService;
 import illinoistech.itm.web.system.integration.student_collabration_platform.service.ProjectService;
 
 import java.net.URI;
@@ -29,9 +31,11 @@ public class ProjectController {
 
     private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
     private final ProjectService projectSvc;
+    private final ApplicationService applicationSvc;
 
-    public ProjectController(ProjectService projectSvc) {
+    public ProjectController(ProjectService projectSvc, ApplicationService applicationSvc) {
         this.projectSvc = projectSvc;
+        this.applicationSvc = applicationSvc;
     }
 
     @GetMapping("/{id}")
@@ -80,16 +84,28 @@ public class ProjectController {
         return ResponseEntity.ok(updated);
     }
 
+    // for student dash board
     @GetMapping("/students/{userId}/open")
-    public ResponseEntity<Map<String, Long>> countOpenForStudent(@PathVariable UUID userId) {
+    public ResponseEntity<Map<String, Object>> countOpenForStudent(@PathVariable UUID userId) {
         log.info("Inside {} - countOpenForStudent method.", ProjectController.class.getSimpleName());
 
         long countOpen = projectSvc.countOpenForStudent(userId);
         long count = projectSvc.countAllForStudentwithoutstatus(userId);
 
-        Map<String, Long> body = Map.of(
+        // Get all applications
+        List<MyApplicationDto> myApps = applicationSvc.getMyApplications(userId);
+
+        // Take only first 3
+        List<MyApplicationDto> top3 =
+                myApps.size() > 3 ? myApps.subList(0, 3) : myApps;
+
+        log.info("My applications (top 3): {}", top3);
+
+        // Build response body with counts + top 3 apps
+        Map<String, Object> body = Map.of(
                 "ActiveProject", countOpen,
-                "totalAppliedProject", count
+                "totalAppliedProject", count,
+                "recentApplications", top3
         );
 
         return ResponseEntity.ok(body);
