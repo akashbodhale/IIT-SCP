@@ -59,8 +59,11 @@ public class IndustryProfileServiceImpl implements IndustryProfileService {
         profile.setLinkedinUrl(dto.getLinkedinUrl());
         profile.setVerificationDocument(dto.getVerificationDocument());
         profile.setVerificationDocument(dto.getVerificationDocument());
-        profile.setCreatedAt(dto.getCreatedAt());
-        profile.setUpdatedAt(dto.getUpdatedAt());
+        // profile.setCreatedAt(dto.getCreatedAt());
+        // profile.setUpdatedAt(dto.getUpdatedAt());
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+        profile.setCreatedAt(now);
+        profile.setUpdatedAt(now);
         // ... any other fields you have
 
         // 4) Save updated entity
