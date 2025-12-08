@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface IndustryProfileService {
     IndustryProfileDto getProfileForUser(UUID userId);
+    IndustryProfileDto editProfileForUser(UUID userId, IndustryProfileDto profile);
 }

@@ -83,7 +83,6 @@ public class AuthService {
             profile.setPosition(req.getPosition());
 
             indrepo.save(profile);
-            log.info("Industry profile has been saved successfully.",indrepo);
         }
 
 
