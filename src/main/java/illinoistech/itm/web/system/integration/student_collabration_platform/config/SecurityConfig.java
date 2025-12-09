@@ -48,12 +48,18 @@ public class SecurityConfig {
                                 "/api/applications/apply",
                                 "/api/applications/industry",
                                 "/api/student/**",
-                                "/api/applications/industry/project-applications"
+                                "/api/applications/industry/project-applications",
+                                "/api/projects/Industry/**",
+                                "/api/projects/industry/**"
 
                         ).permitAll()
 
                         // Public applications & projects (for now)
                         .requestMatchers("/api/applications/**").permitAll()
+                        // Industry and Students endpoints - must come before general /api/projects/**
+                        .requestMatchers(HttpMethod.GET, "/api/projects/Industry/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/projects/industry/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/projects/students/**").permitAll()
                         .requestMatchers("/api/projects/**").permitAll()
 
                         // ⬇️ Student profile endpoints: make them PUBLIC for testing

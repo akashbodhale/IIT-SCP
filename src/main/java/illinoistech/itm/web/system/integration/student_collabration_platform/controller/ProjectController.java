@@ -1,4 +1,5 @@
 package illinoistech.itm.web.system.integration.student_collabration_platform.controller;
+import illinoistech.itm.web.system.integration.student_collabration_platform.dto.IndustryApplicationDto;
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.MyApplicationDto;
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ProjectSummaryDto;
 import illinoistech.itm.web.system.integration.student_collabration_platform.dto.ProjectUpdateRequest;
@@ -99,6 +100,7 @@ public class ProjectController {
         List<MyApplicationDto> top3 =
                 myApps.size() > 3 ? myApps.subList(0, 3) : myApps;
 
+
         log.info("My applications (top 3): {}", top3);
 
         // Build response body with counts + top 3 apps
@@ -111,6 +113,27 @@ public class ProjectController {
         return ResponseEntity.ok(body);
     }
 
+    @GetMapping("/industry/{userId}/open")
+    public ResponseEntity<Map<String, Object>> countOpenForIndustry(@PathVariable UUID userId){
+        log.info("Inside {} - countOpenForIndustry method.", ProjectController.class.getSimpleName());
+
+        // For industry: count open projects owned by this user
+        List<ProjectSummaryDto> allProjects = projectSvc.getAllByIndustry(userId);
+        long countOpen = allProjects.stream()
+                .filter(p -> p.status() == ProjectStatus.OPEN)
+                .count();
+        long count = allProjects.size();
+
+        List<IndustryApplicationDto> top3 = applicationSvc.findIndustryProjectApplicationsByUsertop3(userId);
+
+        Map<String, Object> body = Map.of(
+                "ActiveProject", countOpen,
+                "totalAppliedProject", count,
+                "recentApplications", top3
+        );
+
+        return ResponseEntity.ok(body);
+    }
 
 
 

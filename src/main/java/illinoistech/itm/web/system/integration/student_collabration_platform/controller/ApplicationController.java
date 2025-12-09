@@ -113,17 +113,10 @@ public class ApplicationController {
     }
 
     @PostMapping ("/apply")
-    public ResponseEntity<ApplicationSummaryDto> applyToProject(
-            @RequestBody CreateApplicationRequest request
-    ) {
+    public ResponseEntity<ApplicationSummaryDto> applyToProject(@RequestBody CreateApplicationRequest request) {
         logger.info("Inside {} - applyToProject method.", ApplicationController.class.getSimpleName());
 
-        ApplicationSummaryDto dto = appSvc.applyToProject(
-                request.getUserId(),
-                request.getProjectId(),
-                request.getCoverLetterUrl(),
-                request.getPortfolioLink()
-        );
+        ApplicationSummaryDto dto = appSvc.applyToProject(request.getUserId(),request.getProjectId(),request.getCoverLetterUrl(), request.getPortfolioLink());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }

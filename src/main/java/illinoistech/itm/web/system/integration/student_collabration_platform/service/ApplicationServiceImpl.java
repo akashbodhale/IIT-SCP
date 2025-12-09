@@ -170,7 +170,21 @@ public class ApplicationServiceImpl implements ApplicationService {
             return appRepo.findIndustryProjectApplications(industryUserId, status, pageable);
         }
     }
+    @Override
+    public List<IndustryApplicationDto> findIndustryProjectApplicationsByUsertop3(UUID industryUserId) {
 
+        Users user = userRepo.findById(industryUserId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + industryUserId));
+
+        List<IndustryApplicationDto> liad = appRepo.findIndustryProjectApplicationswithoutstatus(industryUserId);
+
+        // This will return at most 3 elements (if list has < 3, it returns whatever is there)
+        var top3 = liad.stream()
+                .limit(3)
+                .toList();
+
+        return top3;
+    }
     // ========================= EXISTING METHOD =========================
     // Student/Industry applies to a project
     // ==============================================================

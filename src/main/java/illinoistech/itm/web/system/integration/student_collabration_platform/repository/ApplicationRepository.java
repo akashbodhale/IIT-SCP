@@ -122,4 +122,32 @@ public interface ApplicationRepository
     Page<IndustryApplicationDto> findIndustryProjectApplications(UUID industryUserId,
                                                                  ApplicationStatus status,
                                                                  Pageable pageable);
+    @Query("""
+        SELECT new illinoistech.itm.web.system.integration.student_collabration_platform.dto.IndustryApplicationDto(
+            a.applicationId,
+            p.projectId,
+            p.title,
+            p.skills,
+            sp.profileId,
+            stuUser.userId,
+            stuUser.firstName,
+            stuUser.lastName,
+            stuUser.email,
+            sp.university,
+            sp.studentId,
+            sp.major,
+            sp.academicYear,
+            a.appliedAt,
+            a.status,
+            a.coverLetterUrl,
+            a.portfolioLink
+        )
+        FROM Application a
+        JOIN a.project p
+        JOIN p.owner su
+        JOIN a.student sp
+        JOIN sp.user stuUser
+        WHERE su.userId = :industryUserId
+        """)
+    List<IndustryApplicationDto>findIndustryProjectApplicationswithoutstatus(UUID industryUserId);
 }

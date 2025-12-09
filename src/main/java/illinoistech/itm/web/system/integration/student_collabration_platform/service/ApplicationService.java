@@ -36,4 +36,5 @@ public interface ApplicationService {
     Page<IndustryApplicationDto> findIndustryProjectApplicationsByUser(UUID industryUserId,
                                                                        ApplicationStatus status,
                                                                        Pageable pageable);
+    List<IndustryApplicationDto>findIndustryProjectApplicationsByUsertop3(UUID studentUserId);
 }
