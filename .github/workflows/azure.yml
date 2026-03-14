@@ -1,3 +1,11 @@
-name: Azure
-on:
+name: Build & Deploy to Azure ACS
+on: 
+  push:
+    branches: ["main"]
+jobs:
+    build:
+      runs-on: ubuntu-latest
+      steps:
+      - name: Echo a message
+        run: echo "hie"
   
